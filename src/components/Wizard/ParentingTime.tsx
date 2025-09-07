@@ -3,7 +3,10 @@ import { useFormContext } from 'react-hook-form';
 import type { WizardFormData } from '../../types/wizard';
 
 export const ParentingTime: React.FC = () => {
-  const { register, formState: { errors } } = useFormContext<WizardFormData>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<WizardFormData>();
 
   return (
     <div className="usa-form">
@@ -26,7 +29,8 @@ export const ParentingTime: React.FC = () => {
             {...register('parentingTime.annualOvernights', {
               required: 'Annual overnights is required',
               min: { value: 0, message: 'Cannot be negative' },
-              max: { value: 365, message: 'Cannot exceed 365 days per year' }
+              max: { value: 365, message: 'Cannot exceed 365 days per year' },
+              valueAsNumber: true,
             })}
           />
           {errors.parentingTime?.annualOvernights && (
@@ -39,8 +43,9 @@ export const ParentingTime: React.FC = () => {
         <div className="usa-alert usa-alert--info usa-alert--slim margin-top-3">
           <div className="usa-alert__body">
             <p className="usa-alert__text">
-              <strong>Parenting time impact:</strong> More than 73 overnights per year (approximately
-              every other weekend) may reduce the child support obligation through a deviation.
+              <strong>Parenting time impact:</strong> More than 73 overnights per year
+              (approximately every other weekend) may reduce the child support obligation through a
+              deviation.
             </p>
           </div>
         </div>
@@ -58,8 +63,8 @@ export const ParentingTime: React.FC = () => {
         <div className="usa-alert usa-alert--warning usa-alert--slim margin-top-3">
           <div className="usa-alert__body">
             <p className="usa-alert__text">
-              <strong>Note:</strong> Parenting time adjustments become mandatory in Georgia on January 1, 2026.
-              Until then, they are discretionary and require court approval.
+              <strong>Note:</strong> Parenting time adjustments become mandatory in Georgia on
+              January 1, 2026. Until then, they are discretionary and require court approval.
             </p>
           </div>
         </div>

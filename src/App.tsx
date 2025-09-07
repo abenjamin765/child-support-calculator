@@ -1,20 +1,10 @@
-import { useState } from 'react';
-import Wizard from './components/Wizard';
-import Results from './pages/Results';
+import SinglePageCalculator from './components/SinglePageCalculator';
 import type { CalculationBreakdown } from './types/wizard';
 
 function App() {
-  const [calculationResult, setCalculationResult] = useState<CalculationBreakdown | null>(null);
-  const [showWizard, setShowWizard] = useState(true);
-
   const handleCalculationComplete = (result: CalculationBreakdown) => {
-    setCalculationResult(result);
-    setShowWizard(false);
-  };
-
-  const handleRestart = () => {
-    setCalculationResult(null);
-    setShowWizard(true);
+    // Handle calculation completion if needed in the future
+    console.log('Calculation completed:', result);
   };
 
   return (
@@ -27,11 +17,7 @@ function App() {
       </header>
 
       <main className="grid-container padding-y-4">
-        {showWizard ? (
-          <Wizard onComplete={handleCalculationComplete} />
-        ) : (
-          calculationResult && <Results result={calculationResult} onRestart={handleRestart} />
-        )}
+        <SinglePageCalculator onComplete={handleCalculationComplete} />
       </main>
 
       <footer className="bg-base-lightest padding-2 margin-top-4">

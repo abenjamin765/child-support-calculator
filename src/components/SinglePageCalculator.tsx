@@ -1,0 +1,452 @@
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import type { WizardFormData, CalculationBreakdown } from '../types/wizard';
+import { calculateChildSupport } from '../utils/calculations';
+import Disclaimer from './Disclaimer';
+import Results from '../pages/Results';
+
+interface SinglePageCalculatorProps {
+  onComplete: (result: CalculationBreakdown) => void;
+}
+
+export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onComplete }) => {
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [calculationResult, setCalculationResult] = useState<CalculationBreakdown | null>(null);
+
+  const methods = useForm<WizardFormData>({
+    defaultValues: {
+      parentA: {
+        grossMonthly: 0,
+        selfEmploymentTax: 0,
+        preexistingSupport: 0,
+      },
+      parentB: {
+        grossMonthly: 0,
+        selfEmploymentTax: 0,
+        preexistingSupport: 0,
+      },
+      children: {
+        numberOfChildren: 1,
+      },
+      expenses: {
+        healthInsurance: 0,
+        childCare: 0,
+      },
+      parentingTime: {
+        annualOvernights: 0,
+      },
+      deviations: {
+        lowIncome: false,
+        highIncome: false,
+        otherAdjustment: 0,
+      },
+    },
+  });
+
+  const { handleSubmit, register, formState: { errors } } = methods;
+
+  const onSubmit = async (data: WizardFormData) => {
+    setIsCalculating(true);
+    try {
+      const result = calculateChildSupport(
+        data.parentA.grossMonthly,
+        data.parentB.grossMonthly,
+        {
+          selfEmploymentTax: data.parentA.selfEmploymentTax,
+          preexistingSupport: data.parentA.preexistingSupport,
+        },
+        {
+          selfEmploymentTax: data.parentB.selfEmploymentTax,
+          preexistingSupport: data.parentB.preexistingSupport,
+        },
+        data.children.numberOfChildren,
+        {
+          healthInsurance: data.expenses.healthInsurance,
+          childCare: data.expenses.childCare,
+        },
+        {
+          lowIncome: data.deviations.lowIncome,
+          highIncome: data.deviations.highIncome,
+          parentingTime: data.parentingTime.annualOvernights,
+          otherDeviations: data.deviations.otherAdjustment,
+        }
+      );
+      setCalculationResult(result);
+      onComplete(result);
+    } catch (error) {
+      console.error('Calculation error:', error);
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
+  const handleRestart = () => {
+    setCalculationResult(null);
+    methods.reset();
+  };
+
+  if (calculationResult) {
+    return <Results result={calculationResult} onRestart={handleRestart} />;
+  }
+
+  return (
+    <div className="usa-prose">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Parent Information Section */}
+        <div className="margin-bottom-5">
+          <h2 className="margin-bottom-3">Parent Information</h2>
+          <div className="grid-row grid-gap">
+            {/* Parent A */}
+            <div className="tablet:grid-col-6">
+              <div className="usa-card">
+                <div className="usa-card__body">
+                  <h3 className="usa-card__heading">Parent A</h3>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentA.grossMonthly">
+                      Gross Monthly Income *
+                    </label>
+                    <div className="usa-hint margin-bottom-1">
+                      Total monthly income before deductions
+                    </div>
+                    <input
+                      className={`usa-input ${errors.parentA?.grossMonthly ? 'usa-input--error' : ''}`}
+                      id="parentA.grossMonthly"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      {...register('parentA.grossMonthly', {
+                        required: 'Gross monthly income is required',
+                        min: { value: 0, message: 'Income cannot be negative' },
+                        valueAsNumber: true,
+                      })}
+                    />
+                    {errors.parentA?.grossMonthly && (
+                      <span className="usa-error-message" role="alert">
+                        {errors.parentA.grossMonthly.message}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentA.selfEmploymentTax">
+                      Self-Employment Tax Deduction
+                    </label>
+                    <input
+                      className="usa-input"
+                      id="parentA.selfEmploymentTax"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      {...register('parentA.selfEmploymentTax', {
+                        min: { value: 0, message: 'Deduction cannot be negative' },
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </div>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentA.preexistingSupport">
+                      Preexisting Child Support
+                    </label>
+                    <input
+                      className="usa-input"
+                      id="parentA.preexistingSupport"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      {...register('parentA.preexistingSupport', {
+                        min: { value: 0, message: 'Support amount cannot be negative' },
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Parent B */}
+            <div className="tablet:grid-col-6">
+              <div className="usa-card">
+                <div className="usa-card__body">
+                  <h3 className="usa-card__heading">Parent B</h3>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentB.grossMonthly">
+                      Gross Monthly Income *
+                    </label>
+                    <div className="usa-hint margin-bottom-1">
+                      Total monthly income before deductions
+                    </div>
+                    <input
+                      className={`usa-input ${errors.parentB?.grossMonthly ? 'usa-input--error' : ''}`}
+                      id="parentB.grossMonthly"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      {...register('parentB.grossMonthly', {
+                        required: 'Gross monthly income is required',
+                        min: { value: 0, message: 'Income cannot be negative' },
+                        valueAsNumber: true,
+                      })}
+                    />
+                    {errors.parentB?.grossMonthly && (
+                      <span className="usa-error-message" role="alert">
+                        {errors.parentB.grossMonthly.message}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentB.selfEmploymentTax">
+                      Self-Employment Tax Deduction
+                    </label>
+                    <input
+                      className="usa-input"
+                      id="parentB.selfEmploymentTax"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      {...register('parentB.selfEmploymentTax', {
+                        min: { value: 0, message: 'Deduction cannot be negative' },
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </div>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentB.preexistingSupport">
+                      Preexisting Child Support
+                    </label>
+                    <input
+                      className="usa-input"
+                      id="parentB.preexistingSupport"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      {...register('parentB.preexistingSupport', {
+                        min: { value: 0, message: 'Support amount cannot be negative' },
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Child Information Section */}
+        <div className="margin-bottom-5">
+          <h2 className="margin-bottom-3">Child Information</h2>
+          <div className="usa-card">
+            <div className="usa-card__body">
+              <div className="usa-form-group">
+                <label className="usa-label" htmlFor="children.numberOfChildren">
+                  Number of Children *
+                </label>
+                <div className="usa-hint margin-bottom-1">
+                  Enter the number of children for whom child support is being calculated (1-6)
+                </div>
+                <input
+                  className={`usa-input ${errors.children?.numberOfChildren ? 'usa-input--error' : ''}`}
+                  id="children.numberOfChildren"
+                  type="number"
+                  min="1"
+                  max="6"
+                  {...register('children.numberOfChildren', {
+                    required: 'Number of children is required',
+                    min: { value: 1, message: 'Must have at least 1 child' },
+                    max: { value: 6, message: 'Maximum 6 children supported' },
+                    valueAsNumber: true,
+                  })}
+                />
+                {errors.children?.numberOfChildren && (
+                  <span className="usa-error-message" role="alert">
+                    {errors.children.numberOfChildren.message}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Expenses Section */}
+        <div className="margin-bottom-5">
+          <h2 className="margin-bottom-3">Child-Related Expenses</h2>
+          <div className="usa-card">
+            <div className="usa-card__body">
+              <div className="grid-row grid-gap">
+                <div className="tablet:grid-col-6">
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="expenses.healthInsurance">
+                      Monthly Health Insurance Premium
+                    </label>
+                    <div className="usa-hint margin-bottom-1">
+                      Cost of health insurance covering the children
+                    </div>
+                    <div className="usa-input-prefix">
+                      <span className="usa-input-prefix__text">$</span>
+                      <input
+                        className="usa-input"
+                        id="expenses.healthInsurance"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...register('expenses.healthInsurance', {
+                          min: { value: 0, message: 'Amount cannot be negative' },
+                          valueAsNumber: true,
+                        })}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="tablet:grid-col-6">
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="expenses.childCare">
+                      Monthly Child Care Costs
+                    </label>
+                    <div className="usa-hint margin-bottom-1">
+                      Work-related child care expenses
+                    </div>
+                    <div className="usa-input-prefix">
+                      <span className="usa-input-prefix__text">$</span>
+                      <input
+                        className="usa-input"
+                        id="expenses.childCare"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...register('expenses.childCare', {
+                          min: { value: 0, message: 'Amount cannot be negative' },
+                          valueAsNumber: true,
+                        })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Additional Factors Section */}
+        <div className="margin-bottom-5">
+          <h2 className="margin-bottom-3">Additional Factors</h2>
+          <div className="usa-card">
+            <div className="usa-card__body">
+              <div className="grid-row grid-gap">
+                <div className="tablet:grid-col-6">
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentingTime.annualOvernights">
+                      Annual Overnight Visits
+                    </label>
+                    <div className="usa-hint margin-bottom-1">
+                      Number of nights per year the noncustodial parent has physical custody
+                    </div>
+                    <input
+                      className={`usa-input ${errors.parentingTime?.annualOvernights ? 'usa-input--error' : ''}`}
+                      id="parentingTime.annualOvernights"
+                      type="number"
+                      min="0"
+                      max="365"
+                      {...register('parentingTime.annualOvernights', {
+                        required: 'Annual overnights is required',
+                        min: { value: 0, message: 'Cannot be negative' },
+                        max: { value: 365, message: 'Cannot exceed 365 days per year' },
+                        valueAsNumber: true,
+                      })}
+                    />
+                    {errors.parentingTime?.annualOvernights && (
+                      <span className="usa-error-message" role="alert">
+                        {errors.parentingTime.annualOvernights.message}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="tablet:grid-col-6">
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="deviations.otherAdjustment">
+                      Other Adjustments
+                    </label>
+                    <div className="usa-hint margin-bottom-1">
+                      Court-approved deviations from presumptive amount
+                    </div>
+                    <div className="usa-input-prefix">
+                      <input
+                        className={`usa-input ${errors.deviations?.otherAdjustment ? 'usa-input--error' : ''}`}
+                        id="deviations.otherAdjustment"
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...register('deviations.otherAdjustment', {
+                          min: { value: -100, message: 'Cannot reduce by more than 100%' },
+                          max: { value: 1000, message: 'Cannot increase by more than 1000%' },
+                          valueAsNumber: true,
+                        })}
+                      />
+                      <span className="usa-input-prefix__text">%</span>
+                    </div>
+                    {errors.deviations?.otherAdjustment && (
+                      <span className="usa-error-message" role="alert">
+                        {errors.deviations.otherAdjustment.message}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="margin-top-3">
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend">Income-Based Deviations</legend>
+                  <div className="usa-checkbox">
+                    <input
+                      className="usa-checkbox__input"
+                      id="deviations.lowIncome"
+                      type="checkbox"
+                      {...register('deviations.lowIncome')}
+                    />
+                    <label className="usa-checkbox__label" htmlFor="deviations.lowIncome">
+                      Apply low-income adjustment ($1,550-$3,950/month combined income)
+                    </label>
+                  </div>
+
+                  <div className="usa-checkbox">
+                    <input
+                      className="usa-checkbox__input"
+                      id="deviations.highIncome"
+                      type="checkbox"
+                      {...register('deviations.highIncome')}
+                    />
+                    <label className="usa-checkbox__label" htmlFor="deviations.highIncome">
+                      Apply high-income adjustment (&gt;$40,000/month combined income)
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="text-center margin-bottom-5">
+          <button
+            type="submit"
+            className="usa-button usa-button--primary"
+            disabled={isCalculating}
+          >
+            {isCalculating ? 'Calculating...' : 'Calculate Child Support'}
+          </button>
+        </div>
+      </form>
+
+      <Disclaimer className="margin-top-4" />
+    </div>
+  );
+};
+
+export default SinglePageCalculator;

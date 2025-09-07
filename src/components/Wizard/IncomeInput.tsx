@@ -8,7 +8,10 @@ interface IncomeInputProps {
 }
 
 export const IncomeInput: React.FC<IncomeInputProps> = ({ parentLabel, parentKey }) => {
-  const { register, formState: { errors } } = useFormContext<WizardFormData>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<WizardFormData>();
 
   return (
     <div className="usa-form">
@@ -30,7 +33,8 @@ export const IncomeInput: React.FC<IncomeInputProps> = ({ parentLabel, parentKey
             step="0.01"
             {...register(`${parentKey}.grossMonthly`, {
               required: 'Gross monthly income is required',
-              min: { value: 0, message: 'Income cannot be negative' }
+              min: { value: 0, message: 'Income cannot be negative' },
+              valueAsNumber: true,
             })}
           />
           {errors[parentKey]?.grossMonthly && (
@@ -54,7 +58,8 @@ export const IncomeInput: React.FC<IncomeInputProps> = ({ parentLabel, parentKey
             min="0"
             step="0.01"
             {...register(`${parentKey}.selfEmploymentTax`, {
-              min: { value: 0, message: 'Deduction cannot be negative' }
+              min: { value: 0, message: 'Deduction cannot be negative' },
+              valueAsNumber: true,
             })}
           />
         </div>
@@ -73,7 +78,8 @@ export const IncomeInput: React.FC<IncomeInputProps> = ({ parentLabel, parentKey
             min="0"
             step="0.01"
             {...register(`${parentKey}.preexistingSupport`, {
-              min: { value: 0, message: 'Support amount cannot be negative' }
+              min: { value: 0, message: 'Support amount cannot be negative' },
+              valueAsNumber: true,
             })}
           />
         </div>
@@ -81,7 +87,8 @@ export const IncomeInput: React.FC<IncomeInputProps> = ({ parentLabel, parentKey
         <div className="usa-alert usa-alert--info usa-alert--slim margin-top-3">
           <div className="usa-alert__body">
             <p className="usa-alert__text">
-              <strong>Adjusted Income:</strong> Gross income minus deductions = base for child support calculation
+              <strong>Adjusted Income:</strong> Gross income minus deductions = base for child
+              support calculation
             </p>
           </div>
         </div>

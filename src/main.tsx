@@ -1,11 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { initAll } from '@uswds/uswds';
 import './index.css';
 import App from './App.tsx';
 
-// Initialize USWDS components
-initAll();
+// USWDS CSS is imported in index.css and provides styling for components
+// JavaScript initialization is not required for basic component functionality
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

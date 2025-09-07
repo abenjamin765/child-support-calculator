@@ -254,7 +254,7 @@ describe('Child Support Calculations', () => {
 
       expect(result.proRataA).toBe(0);
       expect(result.proRataB).toBe(1);
-      expect(result.payer).toBe('A'); // Parent A (with zero income) would pay
+      expect(result.payer).toBe('A'); // Parent A (with zero income) owes nothing, Parent B pays Parent A
       expect(result.amount).toBeGreaterThan(0);
     });
 

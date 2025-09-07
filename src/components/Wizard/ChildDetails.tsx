@@ -3,7 +3,10 @@ import { useFormContext } from 'react-hook-form';
 import type { WizardFormData } from '../../types/wizard';
 
 export const ChildDetails: React.FC = () => {
-  const { register, formState: { errors } } = useFormContext<WizardFormData>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<WizardFormData>();
 
   return (
     <div className="usa-form">
@@ -26,7 +29,8 @@ export const ChildDetails: React.FC = () => {
             {...register('children.numberOfChildren', {
               required: 'Number of children is required',
               min: { value: 1, message: 'Must have at least 1 child' },
-              max: { value: 6, message: 'Maximum 6 children supported' }
+              max: { value: 6, message: 'Maximum 6 children supported' },
+              valueAsNumber: true,
             })}
           />
           {errors.children?.numberOfChildren && (
@@ -39,8 +43,8 @@ export const ChildDetails: React.FC = () => {
         <div className="usa-alert usa-alert--info usa-alert--slim margin-top-3">
           <div className="usa-alert__body">
             <p className="usa-alert__text">
-              <strong>Note:</strong> The Basic Child Support Obligation (BCSO) table provides amounts
-              for 1-6 children. For more than 6 children, the amount for 6 children applies.
+              <strong>Note:</strong> The Basic Child Support Obligation (BCSO) table provides
+              amounts for 1-6 children. For more than 6 children, the amount for 6 children applies.
             </p>
           </div>
         </div>

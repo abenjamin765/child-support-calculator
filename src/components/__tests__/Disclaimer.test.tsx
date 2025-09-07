@@ -1,4 +1,5 @@
 // React is imported automatically with JSX
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import Disclaimer from '../Disclaimer';
 
@@ -9,7 +10,9 @@ describe('Disclaimer', () => {
     expect(screen.getByText('Important Disclaimer')).toBeInTheDocument();
     expect(screen.getByText(/This tool provides estimates only/)).toBeInTheDocument();
     expect(screen.getByText(/Consult an attorney/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Georgia Child Support Commission/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /Georgia Child Support Commission/ })
+    ).toBeInTheDocument();
   });
 
   it('renders disclaimer without icon when showIcon is false', () => {

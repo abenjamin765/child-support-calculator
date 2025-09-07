@@ -12,7 +12,7 @@ const STEPS: WizardStep[] = [
   {
     id: 1,
     title: 'Parent A Income',
-    description: 'Enter Parent A\'s income information',
+    description: "Enter Parent A's income information",
     component: 'incomeA',
     isCompleted: false,
     isActive: true,
@@ -20,7 +20,7 @@ const STEPS: WizardStep[] = [
   {
     id: 2,
     title: 'Parent B Income',
-    description: 'Enter Parent B\'s income information',
+    description: "Enter Parent B's income information",
     component: 'incomeB',
     isCompleted: false,
     isActive: false,
@@ -210,19 +210,11 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete }) => {
               )}
 
               {currentStep < STEPS.length - 1 ? (
-                <button
-                  type="button"
-                  className="usa-button"
-                  onClick={handleNext}
-                >
+                <button type="button" className="usa-button" onClick={handleNext}>
                   Next
                 </button>
               ) : (
-                <button
-                  type="submit"
-                  className="usa-button"
-                  disabled={isCalculating}
-                >
+                <button type="submit" className="usa-button" disabled={isCalculating}>
                   {isCalculating ? 'Calculating...' : 'Calculate Child Support'}
                 </button>
               )}

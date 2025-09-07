@@ -196,22 +196,24 @@ export const calculateChildSupport = (
   const finalSupportB = applyDeviations(presumptiveSupportB, deviations, combinedIncome);
 
   // Determine payer and amount
-  const netSupportA = finalSupportA - finalSupportB;
-  const netSupportB = finalSupportB - finalSupportA;
+  // finalSupportA is what Parent A owes, finalSupportB is what Parent B owes
+  const difference = finalSupportA - finalSupportB;
 
   let payer: 'A' | 'B' | 'None';
   let amount: number;
 
-  if (Math.abs(netSupportA - netSupportB) < 1) {
-    // Within $1 tolerance
+  if (Math.abs(difference) < 1) {
+    // Within $1 tolerance - no payment needed
     payer = 'None';
     amount = 0;
-  } else if (netSupportA > netSupportB) {
-    payer = 'B'; // B pays A
-    amount = netSupportA;
+  } else if (difference > 0) {
+    // Parent A owes more than Parent B, so Parent B pays Parent A
+    payer = 'B';
+    amount = difference;
   } else {
-    payer = 'A'; // A pays B
-    amount = netSupportB;
+    // Parent B owes more than Parent A, so Parent A pays Parent B
+    payer = 'A';
+    amount = Math.abs(difference);
   }
 
   return {

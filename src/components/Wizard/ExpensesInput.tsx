@@ -27,7 +27,8 @@ export const ExpensesInput: React.FC = () => {
               step="0.01"
               placeholder="0.00"
               {...register('expenses.healthInsurance', {
-                min: { value: 0, message: 'Amount cannot be negative' }
+                min: { value: 0, message: 'Amount cannot be negative' },
+                valueAsNumber: true,
               })}
             />
           </div>
@@ -50,7 +51,8 @@ export const ExpensesInput: React.FC = () => {
               step="0.01"
               placeholder="0.00"
               {...register('expenses.childCare', {
-                min: { value: 0, message: 'Amount cannot be negative' }
+                min: { value: 0, message: 'Amount cannot be negative' },
+                valueAsNumber: true,
               })}
             />
           </div>
@@ -59,8 +61,8 @@ export const ExpensesInput: React.FC = () => {
         <div className="usa-alert usa-alert--info usa-alert--slim margin-top-3">
           <div className="usa-alert__body">
             <p className="usa-alert__text">
-              <strong>How expenses are handled:</strong> These costs are added to the basic child support
-              amount and prorated between parents based on their income shares.
+              <strong>How expenses are handled:</strong> These costs are added to the basic child
+              support amount and prorated between parents based on their income shares.
             </p>
           </div>
         </div>

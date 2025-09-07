@@ -3,7 +3,10 @@ import { useFormContext } from 'react-hook-form';
 import type { WizardFormData } from '../../types/wizard';
 
 export const Deviations: React.FC = () => {
-  const { register, formState: { errors } } = useFormContext<WizardFormData>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<WizardFormData>();
 
   return (
     <div className="usa-form">
@@ -66,7 +69,8 @@ export const Deviations: React.FC = () => {
               placeholder="0.00"
               {...register('deviations.otherAdjustment', {
                 min: { value: -100, message: 'Cannot reduce by more than 100%' },
-                max: { value: 1000, message: 'Cannot increase by more than 1000%' }
+                max: { value: 1000, message: 'Cannot increase by more than 1000%' },
+                valueAsNumber: true,
               })}
             />
             <span className="usa-input-prefix__text">%</span>
@@ -81,8 +85,9 @@ export const Deviations: React.FC = () => {
         <div className="usa-alert usa-alert--info usa-alert--slim margin-top-3">
           <div className="usa-alert__body">
             <p className="usa-alert__text">
-              <strong>Deviation Guidelines:</strong> Courts may deviate from the presumptive amount if it
-              would be unjust or inappropriate. Deviations must be supported by written findings.
+              <strong>Deviation Guidelines:</strong> Courts may deviate from the presumptive amount
+              if it would be unjust or inappropriate. Deviations must be supported by written
+              findings.
             </p>
           </div>
         </div>
