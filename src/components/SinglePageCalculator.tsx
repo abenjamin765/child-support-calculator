@@ -44,7 +44,12 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
     },
   });
 
-  const { handleSubmit, register, formState: { errors }, watch } = methods;
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    watch,
+  } = methods;
 
   // Watch for income changes to update combined income
   const watchedParentAIncome = watch('parentA.grossMonthly');
@@ -58,11 +63,13 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
     setCombinedIncome(combined);
   }, [watchedParentAIncome, watchedParentBIncome]);
 
-  // Helper function to determine automatic deviations
-  const getAutomaticDeviations = (combinedIncome: number) => {
+  // Helper function to determine automatic deviations and income status
+  const getIncomeStatus = (combinedIncome: number) => {
     return {
       lowIncome: combinedIncome >= 1550 && combinedIncome <= 3950,
       highIncome: combinedIncome > 40000,
+      veryLowIncome: combinedIncome > 0 && combinedIncome < 800,
+      noAdjustments: combinedIncome >= 800 && combinedIncome < 1550 || combinedIncome > 3950 && combinedIncome <= 40000,
     };
   };
 
@@ -70,12 +77,18 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
     setIsCalculating(true);
     try {
       // Calculate combined income
-      const adjustedIncomeA = data.parentA.grossMonthly - data.parentA.selfEmploymentTax - data.parentA.preexistingSupport;
-      const adjustedIncomeB = data.parentB.grossMonthly - data.parentB.selfEmploymentTax - data.parentB.preexistingSupport;
+      const adjustedIncomeA =
+        data.parentA.grossMonthly -
+        data.parentA.selfEmploymentTax -
+        data.parentA.preexistingSupport;
+      const adjustedIncomeB =
+        data.parentB.grossMonthly -
+        data.parentB.selfEmploymentTax -
+        data.parentB.preexistingSupport;
       const combinedIncome = Math.max(0, adjustedIncomeA + adjustedIncomeB);
 
       // Automatically determine deviations
-      const automaticDeviations = getAutomaticDeviations(combinedIncome);
+      const incomeStatus = getIncomeStatus(combinedIncome);
 
       const result = calculateChildSupport(
         data.parentA.grossMonthly,
@@ -94,8 +107,8 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
           childCare: data.expenses.childCare,
         },
         {
-          lowIncome: automaticDeviations.lowIncome,
-          highIncome: automaticDeviations.highIncome,
+          lowIncome: incomeStatus.lowIncome,
+          highIncome: incomeStatus.highIncome,
           parentingTime: data.parentingTime.annualOvernights,
           otherDeviations: data.deviations.otherAdjustment,
         }
@@ -280,17 +293,25 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                   <p className="margin-bottom-1">
                     <strong>Combined Monthly Income:</strong> ${combinedIncome.toLocaleString()}
                   </p>
-                  {getAutomaticDeviations(combinedIncome).lowIncome && (
+                  {getIncomeStatus(combinedIncome).veryLowIncome && (
+                    <p className="margin-bottom-1" style={{ color: '#e41b3a' }}>
+                      <strong>Very Low Income Notice:</strong> Combined income below $800 minimum threshold.
+                      Using minimum bracket calculation per Georgia guidelines.
+                    </p>
+                  )}
+                  {getIncomeStatus(combinedIncome).lowIncome && (
                     <p className="margin-bottom-1" style={{ color: '#2e8540' }}>
-                      <strong>Low-Income Adjustment Applied:</strong> Combined income ($1,550-$3,950) qualifies for automatic reduction under Georgia guidelines.
+                      <strong>Low-Income Adjustment Applied:</strong> Combined income
+                      ($1,550-$3,950) qualifies for automatic reduction under Georgia guidelines.
                     </p>
                   )}
-                  {getAutomaticDeviations(combinedIncome).highIncome && (
+                  {getIncomeStatus(combinedIncome).highIncome && (
                     <p className="margin-bottom-1" style={{ color: '#e49300' }}>
-                      <strong>High-Income Adjustment Applied:</strong> Combined income &gt;$40,000 qualifies for automatic adjustment under Georgia guidelines.
+                      <strong>High-Income Adjustment Applied:</strong> Combined income &gt;$40,000
+                      qualifies for automatic adjustment under Georgia guidelines.
                     </p>
                   )}
-                  {!getAutomaticDeviations(combinedIncome).lowIncome && !getAutomaticDeviations(combinedIncome).highIncome && (
+                  {getIncomeStatus(combinedIncome).noAdjustments && (
                     <p className="margin-bottom-1">
                       No automatic income-based adjustments apply to this income level.
                     </p>
@@ -373,9 +394,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                     <label className="usa-label" htmlFor="expenses.childCare">
                       Monthly Child Care Costs
                     </label>
-                    <div className="usa-hint margin-bottom-1">
-                      Work-related child care expenses
-                    </div>
+                    <div className="usa-hint margin-bottom-1">Work-related child care expenses</div>
                     <div className="usa-input-prefix">
                       <span className="usa-input-prefix__text">$</span>
                       <input
@@ -464,18 +483,13 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
         <div className="text-center margin-bottom-5">
-          <button
-            type="submit"
-            className="usa-button usa-button--primary"
-            disabled={isCalculating}
-          >
+          <button type="submit" className="usa-button usa-button--primary" disabled={isCalculating}>
             {isCalculating ? 'Calculating...' : 'Calculate Child Support'}
           </button>
         </div>

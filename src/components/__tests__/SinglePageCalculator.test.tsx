@@ -123,6 +123,22 @@ describe('SinglePageCalculator', () => {
 
     expect(screen.getByText('Automatic Income-Based Adjustments')).toBeInTheDocument();
     expect(screen.getByText('$6,000')).toBeInTheDocument(); // Combined income
-    expect(screen.getByText('No automatic income-based adjustments apply to this income level.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No automatic income-based adjustments apply to this income level.')
+    ).toBeInTheDocument();
+  });
+
+  it('handles very low income below minimum threshold', () => {
+    render(<SinglePageCalculator onComplete={mockOnComplete} />);
+
+    // Fill in very low incomes below $800 minimum
+    const grossIncomeInputs = screen.getAllByLabelText(/Gross Monthly Income/);
+    fireEvent.change(grossIncomeInputs[0], { target: { value: '400' } });
+    fireEvent.change(grossIncomeInputs[1], { target: { value: '300' } });
+
+    expect(screen.getByText('Automatic Income-Based Adjustments')).toBeInTheDocument();
+    expect(screen.getByText('$700')).toBeInTheDocument(); // Combined income
+    expect(screen.getByText('Very Low Income Notice:')).toBeInTheDocument();
+    expect(screen.getByText(/below.*minimum threshold/)).toBeInTheDocument();
   });
 });

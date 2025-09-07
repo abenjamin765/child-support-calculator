@@ -81,7 +81,7 @@ describe('Child Support Calculations', () => {
     });
 
     it('should handle income outside table range', () => {
-      expect(lookupBCSO(500, 2)).toBe(0); // Below minimum
+      expect(lookupBCSO(500, 2)).toBe(260); // Below minimum, uses $800 bracket for 2 children
       expect(lookupBCSO(50000, 2)).toBeGreaterThan(0); // Above maximum, should use highest bracket
     });
   });

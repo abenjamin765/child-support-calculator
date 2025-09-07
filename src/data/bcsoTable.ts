@@ -67,6 +67,15 @@ export const findBCSOBracket = (income: number): BCSOEntry | null => {
 
 export const getBCSOAmount = (income: number, children: number): number => {
   const bracket = findBCSOBracket(income);
+
+  // For incomes below minimum threshold, use the minimum bracket ($800)
+  if (!bracket && income > 0) {
+    const minBracket = BCSO_TABLE.find((entry) => entry.income === 800);
+    if (minBracket && children >= 1 && children <= 6) {
+      return minBracket.children[children as keyof typeof minBracket.children] || 0;
+    }
+  }
+
   if (!bracket || children < 1 || children > 6) return 0;
 
   return bracket.children[children as keyof typeof bracket.children] || 0;
@@ -79,4 +88,32 @@ export const isValidIncome = (income: number): boolean => {
 
 export const isValidChildren = (children: number): boolean => {
   return Number.isInteger(children) && children >= 1 && children <= 6;
+};
+
+// Test helper for very low incomes - used in tests
+export const getBCSOAmountWithFallback = (
+  income: number,
+  children: number
+): { amount: number; usedMinimumBracket: boolean } => {
+  const bracket = findBCSOBracket(income);
+
+  // For incomes below minimum threshold, use the minimum bracket ($800)
+  if (!bracket && income > 0) {
+    const minBracket = BCSO_TABLE.find((entry) => entry.income === 800);
+    if (minBracket && children >= 1 && children <= 6) {
+      return {
+        amount: minBracket.children[children as keyof typeof minBracket.children] || 0,
+        usedMinimumBracket: true,
+      };
+    }
+  }
+
+  if (!bracket || children < 1 || children > 6) {
+    return { amount: 0, usedMinimumBracket: false };
+  }
+
+  return {
+    amount: bracket.children[children as keyof typeof bracket.children] || 0,
+    usedMinimumBracket: false,
+  };
 };
