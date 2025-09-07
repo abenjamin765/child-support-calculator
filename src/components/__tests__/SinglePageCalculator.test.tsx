@@ -28,6 +28,7 @@ jest.mock('../../utils/calculations', () => ({
   })),
   formatCurrency: jest.fn((amount) => `$${amount}`),
   formatPercentage: jest.fn((value) => `${(value * 100).toFixed(1)}%`),
+  roundUpPercentage: jest.fn((value) => Math.ceil(value * 100)),
   getOvernightsFromSchedule: jest.fn((schedule, custom) => {
     switch (schedule) {
       case 'no-visitation':
@@ -178,6 +179,8 @@ describe('SinglePageCalculator', () => {
 
     expect(screen.getByLabelText(/Monthly Health Insurance Premium/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Monthly Child Care Costs/)).toBeInTheDocument();
+    expect(screen.getByText('Who pays for health insurance?')).toBeInTheDocument();
+    expect(screen.getByText('Who pays for child care?')).toBeInTheDocument();
   });
 
   it('renders additional factors', () => {

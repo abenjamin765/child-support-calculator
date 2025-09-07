@@ -22,8 +22,14 @@ export interface ChildInfo {
 }
 
 export interface Expenses {
-  healthInsurance: number;
-  childCare: number;
+  healthInsurance: {
+    totalCost: number;
+    payingParent: 'A' | 'B' | 'shared';
+  };
+  childCare: {
+    totalCost: number;
+    payingParent: 'A' | 'B' | 'shared';
+  };
 }
 
 // ParentingTime interface removed - now handled through custody arrangements

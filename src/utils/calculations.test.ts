@@ -7,6 +7,7 @@ import {
   calculateChildSupport,
   formatCurrency,
   formatPercentage,
+  roundUpPercentage,
   type Deductions,
   type Expenses,
   type DeviationOptions,
@@ -89,8 +90,14 @@ describe('Child Support Calculations', () => {
   describe('applyAdjustments', () => {
     it('should add expenses to base amount', () => {
       const expenses: Expenses = {
-        healthInsurance: 200,
-        childCare: 300,
+        healthInsurance: {
+          totalCost: 200,
+          payingParent: 'shared',
+        },
+        childCare: {
+          totalCost: 300,
+          payingParent: 'shared',
+        },
       };
 
       expect(applyAdjustments(1000, expenses)).toBe(1500);
@@ -98,8 +105,14 @@ describe('Child Support Calculations', () => {
 
     it('should handle zero expenses', () => {
       const expenses: Expenses = {
-        healthInsurance: 0,
-        childCare: 0,
+        healthInsurance: {
+          totalCost: 0,
+          payingParent: 'shared',
+        },
+        childCare: {
+          totalCost: 0,
+          payingParent: 'shared',
+        },
       };
 
       expect(applyAdjustments(1000, expenses)).toBe(1000);
@@ -176,8 +189,14 @@ describe('Child Support Calculations', () => {
     };
 
     const defaultExpenses: Expenses = {
-      healthInsurance: 0,
-      childCare: 0,
+      healthInsurance: {
+        totalCost: 0,
+        payingParent: 'shared',
+      },
+      childCare: {
+        totalCost: 0,
+        payingParent: 'shared',
+      },
     };
 
     const defaultDeviations: DeviationOptions = {
@@ -220,8 +239,8 @@ describe('Child Support Calculations', () => {
         1,
         defaultExpenses,
         defaultDeviations,
-        'custodial', // Parent A arrangement
-        'standard', // Parent B arrangement
+        'custodial', // Parent A arrangement (custodial)
+        'standard', // Parent B arrangement (non-custodial)
         undefined,
         undefined,
         undefined,
@@ -230,13 +249,20 @@ describe('Child Support Calculations', () => {
 
       expect(result.proRataA).toBe(0.5);
       expect(result.proRataB).toBe(0.5);
-      expect(result.amount).toBe(0); // Should be equal, no payment needed
+      expect(result.payer).toBe('B'); // Parent B is non-custodial, so Parent B pays Parent A
+      expect(result.amount).toBe(result.finalSupportB); // Parent B pays their 50% share
     });
 
     it('should handle expenses correctly', () => {
       const expenses: Expenses = {
-        healthInsurance: 200,
-        childCare: 300,
+        healthInsurance: {
+          totalCost: 200,
+          payingParent: 'shared',
+        },
+        childCare: {
+          totalCost: 300,
+          payingParent: 'shared',
+        },
       };
 
       const result = calculateChildSupport(
@@ -259,14 +285,25 @@ describe('Child Support Calculations', () => {
       expect(result.expensesB).toBeCloseTo(166.67, 1); // 1/3 of total expenses based on income share (within $0.1 tolerance)
     });
 
-    it('should handle zero income edge case', () => {
+    it('should handle expenses when Parent A pays', () => {
+      const expenses: Expenses = {
+        healthInsurance: {
+          totalCost: 200,
+          payingParent: 'A',
+        },
+        childCare: {
+          totalCost: 300,
+          payingParent: 'A',
+        },
+      };
+
       const result = calculateChildSupport(
-        0,
-        5000,
+        4000,
+        2000,
         defaultDeductions,
         defaultDeductions,
-        1,
-        defaultExpenses,
+        2,
+        expenses,
         defaultDeviations,
         'custodial', // Parent A arrangement
         'standard', // Parent B arrangement
@@ -276,10 +313,34 @@ describe('Child Support Calculations', () => {
         undefined
       );
 
+      // Parent A pays full amount ($500), so expensesA should be 0
+      // Parent B should reimburse their share: 1/3 of $500 = $166.67
+      expect(result.expensesA).toBe(0);
+      expect(result.expensesB).toBeCloseTo(166.67, 1);
+      expect(result.expensesA + result.expensesB).toBeCloseTo(166.67, 1); // Total reimbursement obligation
+    });
+
+    it('should handle zero income edge case', () => {
+      const result = calculateChildSupport(
+        0,
+        5000,
+        defaultDeductions,
+        defaultDeductions,
+        1,
+        defaultExpenses,
+        defaultDeviations,
+        'custodial', // Parent A arrangement (custodial)
+        'standard', // Parent B arrangement (non-custodial)
+        undefined,
+        undefined,
+        undefined,
+        undefined
+      );
+
       expect(result.proRataA).toBe(0);
       expect(result.proRataB).toBe(1);
-      expect(result.payer).toBe('A'); // Parent A (with zero income) owes nothing, Parent B pays Parent A
-      expect(result.amount).toBeGreaterThan(0);
+      expect(result.payer).toBe('B'); // Parent B is non-custodial, so Parent B pays Parent A (custodial)
+      expect(result.amount).toBe(result.finalSupportB); // Parent B pays their full share
     });
 
     it('should handle high-income deviation', () => {
@@ -321,8 +382,8 @@ describe('Child Support Calculations', () => {
         2,
         defaultExpenses,
         defaultDeviations,
-        'custodial', // Parent A arrangement
-        'standard', // Parent B arrangement
+        'custodial', // Parent A arrangement (custodial)
+        'standard', // Parent B arrangement (non-custodial)
         undefined,
         undefined,
         undefined,
@@ -330,8 +391,8 @@ describe('Child Support Calculations', () => {
       );
 
       expect(result.bcso).toBeGreaterThan(0);
-      expect(result.payer).toBe('None');
-      expect(result.amount).toBe(0);
+      expect(result.payer).toBe('B'); // Parent B is non-custodial, so Parent B pays Parent A
+      expect(result.amount).toBe(result.finalSupportB); // Parent B pays their share
     });
   });
 
@@ -340,7 +401,17 @@ describe('Child Support Calculations', () => {
       it('should format amounts correctly', () => {
         expect(formatCurrency(1234)).toBe('$1,234');
         expect(formatCurrency(0)).toBe('$0');
-        expect(formatCurrency(1234.56)).toBe('$1,235'); // Rounds to nearest dollar
+        expect(formatCurrency(1234.56)).toBe('$1,235'); // Rounds up to nearest dollar
+      });
+    });
+
+    describe('roundUpPercentage', () => {
+      it('should round up percentages to nearest whole number', () => {
+        expect(roundUpPercentage(0.456)).toBe(46); // 45.6% rounds up to 46%
+        expect(roundUpPercentage(0.123)).toBe(13); // 12.3% rounds up to 13%
+        expect(roundUpPercentage(0.999)).toBe(100); // 99.9% rounds up to 100%
+        expect(roundUpPercentage(0.001)).toBe(1); // 0.1% rounds up to 1%
+        expect(roundUpPercentage(0.5)).toBe(50); // 50% stays 50%
       });
     });
 

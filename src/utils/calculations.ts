@@ -8,8 +8,14 @@ export interface Deductions {
 }
 
 export interface Expenses {
-  healthInsurance: number;
-  childCare: number;
+  healthInsurance: {
+    totalCost: number;
+    payingParent: 'A' | 'B' | 'shared';
+  };
+  childCare: {
+    totalCost: number;
+    payingParent: 'A' | 'B' | 'shared';
+  };
 }
 
 export interface DeviationOptions {
@@ -165,7 +171,7 @@ export const lookupBCSO = (combinedIncome: number, numChildren: number): number 
  * @returns Adjusted amount
  */
 export const applyAdjustments = (base: number, expenses: Expenses): number => {
-  return base + expenses.healthInsurance + expenses.childCare;
+  return base + expenses.healthInsurance.totalCost + expenses.childCare.totalCost;
 };
 
 /**
@@ -270,10 +276,31 @@ export const calculateChildSupport = (
   const basicSupportA = bcso * shareA;
   const basicSupportB = bcso * shareB;
 
-  // Step 6: Apply expense adjustments
-  const totalExpenses = expenses.healthInsurance + expenses.childCare;
-  const expensesA = totalExpenses * shareA;
-  const expensesB = totalExpenses * shareB;
+  // Step 6: Apply expense adjustments with payment attribution
+  const calculateExpenseShare = (
+    expense: { totalCost: number; payingParent: 'A' | 'B' | 'shared' },
+    shareA: number,
+    shareB: number
+  ) => {
+    const totalCost = expense.totalCost;
+
+    if (expense.payingParent === 'A') {
+      // Parent A pays the full amount, Parent B reimburses their share
+      return { expensesA: 0, expensesB: totalCost * shareB };
+    } else if (expense.payingParent === 'B') {
+      // Parent B pays the full amount, Parent A reimburses their share
+      return { expensesA: totalCost * shareA, expensesB: 0 };
+    } else {
+      // Shared - split proportionally to income share
+      return { expensesA: totalCost * shareA, expensesB: totalCost * shareB };
+    }
+  };
+
+  const healthInsuranceShares = calculateExpenseShare(expenses.healthInsurance, shareA, shareB);
+  const childCareShares = calculateExpenseShare(expenses.childCare, shareA, shareB);
+
+  const expensesA = healthInsuranceShares.expensesA + childCareShares.expensesA;
+  const expensesB = healthInsuranceShares.expensesB + childCareShares.expensesB;
 
   // Step 7: Calculate presumptive amounts
   const presumptiveSupportA = basicSupportA + expensesA;
@@ -296,25 +323,25 @@ export const calculateChildSupport = (
     combinedIncome
   );
 
-  // Determine payer and amount
-  // finalSupportA is what Parent A owes, finalSupportB is what Parent B owes
-  const difference = finalSupportA - finalSupportB;
-
+  // Determine payer and amount based on custody
+  // In Georgia's income shares model: non-custodial parent pays custodial parent
   let payer: 'A' | 'B' | 'None';
   let amount: number;
 
-  if (Math.abs(difference) < 1) {
-    // Within $1 tolerance - no payment needed
+  if (custodialParent === 'A') {
+    // Parent A is custodial, Parent B is non-custodial and pays Parent A
+    payer = 'B';
+    amount = finalSupportB; // Parent B's share is what they pay
+  } else {
+    // Parent B is custodial, Parent A is non-custodial and pays Parent B
+    payer = 'A';
+    amount = finalSupportA; // Parent A's share is what they pay
+  }
+
+  // Only set to None if both amounts are actually zero (no child support obligation)
+  if (finalSupportA === 0 && finalSupportB === 0) {
     payer = 'None';
     amount = 0;
-  } else if (difference > 0) {
-    // Parent A owes more than Parent B, so Parent B pays Parent A
-    payer = 'B';
-    amount = difference;
-  } else {
-    // Parent B owes more than Parent A, so Parent A pays Parent B
-    payer = 'A';
-    amount = Math.abs(difference);
   }
 
   return {
@@ -370,17 +397,19 @@ export const getOvernightsFromSchedule = (
 };
 
 /**
- * Format currency for display
+ * Format currency for display (rounds up to nearest dollar)
  * @param amount - Amount to format
  * @returns Formatted currency string
  */
 export const formatCurrency = (amount: number): string => {
+  // Round up to nearest dollar using Math.ceil
+  const roundedAmount = Math.ceil(amount);
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(roundedAmount);
 };
 
 /**
@@ -394,4 +423,13 @@ export const formatPercentage = (value: number): string => {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   }).format(value);
+};
+
+/**
+ * Round up percentage to nearest whole number
+ * @param decimalValue - Decimal percentage value (e.g., 0.456 for 45.6%)
+ * @returns Rounded up whole number percentage
+ */
+export const roundUpPercentage = (decimalValue: number): number => {
+  return Math.ceil(decimalValue * 100);
 };

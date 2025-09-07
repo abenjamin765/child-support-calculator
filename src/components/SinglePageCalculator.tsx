@@ -36,8 +36,14 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
         numberOfChildren: 1,
       },
       expenses: {
-        healthInsurance: 0,
-        childCare: 0,
+        healthInsurance: {
+          totalCost: 0,
+          payingParent: 'shared',
+        },
+        childCare: {
+          totalCost: 0,
+          payingParent: 'shared',
+        },
       },
       deviations: {
         lowIncome: false,
@@ -107,10 +113,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
           preexistingSupport: data.parentB.preexistingSupport,
         },
         data.children.numberOfChildren,
-        {
-          healthInsurance: data.expenses.healthInsurance,
-          childCare: data.expenses.childCare,
-        },
+        data.expenses,
         {
           lowIncome: incomeStatus.lowIncome,
           highIncome: incomeStatus.highIncome,
@@ -141,7 +144,13 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
   };
 
   if (calculationResult) {
-    return <Results result={calculationResult} onRestart={handleRestart} />;
+    return (
+      <Results
+        result={calculationResult}
+        formData={methods.getValues()}
+        onRestart={handleRestart}
+      />
+    );
   }
 
   return (
@@ -245,7 +254,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.custodial">
                               <strong>Custodial Parent</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Primary physical custody of the children. The other parent will have
                                 visitation rights.
                               </span>
@@ -264,7 +273,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.no-visitation">
                               <strong>No Visitation</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Noncustodial parent has no overnight visits with the children.
                               </span>
                             </label>
@@ -282,7 +291,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.minimal">
                               <strong>Minimal Parenting Time</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52
                                 overnights per year.
                               </span>
@@ -301,7 +310,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.standard">
                               <strong>Standard Parenting Time</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Every other weekend + 2 weeks in summer + holidays = 80 overnights
                                 per year.
                               </span>
@@ -320,7 +329,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.extended">
                               <strong>Extended Parenting Time</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Every other weekend + one weekday per week + 4 weeks in summer = 110
                                 overnights per year.
                               </span>
@@ -339,7 +348,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.shared">
                               <strong>Shared Custody</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146
                                 overnights per year.
                               </span>
@@ -358,7 +367,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.custom">
                               <strong>Custom Overnights</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Enter exact number of overnight visits per year (0–365 days).
                               </span>
                             </label>
@@ -486,7 +495,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.custodial">
                               <strong>Custodial Parent</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Primary physical custody of the children. The other parent will have
                                 visitation rights.
                               </span>
@@ -505,7 +514,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.no-visitation">
                               <strong>No Visitation</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Noncustodial parent has no overnight visits with the children.
                               </span>
                             </label>
@@ -523,7 +532,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.minimal">
                               <strong>Minimal Parenting Time</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52
                                 overnights per year.
                               </span>
@@ -542,7 +551,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.standard">
                               <strong>Standard Parenting Time</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Every other weekend + 2 weeks in summer + holidays = 80 overnights
                                 per year.
                               </span>
@@ -561,7 +570,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.extended">
                               <strong>Extended Parenting Time</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Every other weekend + one weekday per week + 4 weeks in summer = 110
                                 overnights per year.
                               </span>
@@ -580,7 +589,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.shared">
                               <strong>Shared Custody</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146
                                 overnights per year.
                               </span>
@@ -599,7 +608,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.custom">
                               <strong>Custom Overnights</strong>
-                              <span className="usa-checkbox__label-description">
+                              <span className="usa-radio__label-description">
                                 Enter exact number of overnight visits per year (0–365 days).
                               </span>
                             </label>
@@ -640,12 +649,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
           <div className="margin-bottom-5">
             <div className="usa-alert usa-alert--info usa-alert--slim">
               <div className="usa-alert__body">
-                <h3 className="usa-alert__heading">
-                  <svg aria-hidden="true" className="usa-icon" focusable="false" role="img">
-                    <use xlinkHref="#info-circle" />
-                  </svg>
-                  Automatic Income-Based Adjustments
-                </h3>
+                <h4 className="usa-alert__heading">Automatic Income-Based Adjustments</h4>
                 <div className="usa-alert__text">
                   <p className="margin-bottom-1">
                     <strong>Combined Monthly Income:</strong> ${combinedIncome.toLocaleString()}
@@ -717,16 +721,19 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
         {/* Expenses Section */}
         <div className="margin-bottom-5">
           <h2 className="margin-bottom-3">Child-Related Expenses</h2>
-          <div className="usa-card">
+
+          {/* Health Insurance Section */}
+          <div className="usa-card margin-bottom-3">
             <div className="usa-card__body">
               <div className="grid-row grid-gap">
                 <div className="tablet:grid-col-6">
                   <div className="usa-form-group">
-                    <label className="usa-label" htmlFor="expenses.healthInsurance">
+                    <label className="usa-label" htmlFor="expenses.healthInsurance.totalCost">
                       Monthly Health Insurance Premium
                     </label>
                     <div className="usa-hint margin-bottom-1">
-                      Cost of health insurance covering the children
+                      Total cost of health insurance covering the children (to be shared between
+                      parents)
                     </div>
                     <div className="usa-input-group">
                       <div className="usa-input-prefix" aria-hidden="true">
@@ -734,12 +741,12 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                       </div>
                       <input
                         className="usa-input"
-                        id="expenses.healthInsurance"
+                        id="expenses.healthInsurance.totalCost"
                         type="number"
                         min="0"
                         step="0.01"
                         placeholder="0.00"
-                        {...register('expenses.healthInsurance', {
+                        {...register('expenses.healthInsurance.totalCost', {
                           min: { value: 0, message: 'Amount cannot be negative' },
                           valueAsNumber: true,
                         })}
@@ -750,27 +757,126 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
 
                 <div className="tablet:grid-col-6">
                   <div className="usa-form-group">
-                    <label className="usa-label" htmlFor="expenses.childCare">
+                    <fieldset className="usa-fieldset">
+                      <legend className="usa-legend">Who pays for health insurance?</legend>
+                      <div className="usa-radio">
+                        <input
+                          className="usa-radio__input"
+                          id="healthInsurance-parentA"
+                          type="radio"
+                          value="A"
+                          {...register('expenses.healthInsurance.payingParent')}
+                        />
+                        <label className="usa-radio__label" htmlFor="healthInsurance-parentA">
+                          Parent A pays
+                        </label>
+                      </div>
+                      <div className="usa-radio">
+                        <input
+                          className="usa-radio__input"
+                          id="healthInsurance-parentB"
+                          type="radio"
+                          value="B"
+                          {...register('expenses.healthInsurance.payingParent')}
+                        />
+                        <label className="usa-radio__label" htmlFor="healthInsurance-parentB">
+                          Parent B pays
+                        </label>
+                      </div>
+                      <div className="usa-radio">
+                        <input
+                          className="usa-radio__input"
+                          id="healthInsurance-shared"
+                          type="radio"
+                          value="shared"
+                          defaultChecked
+                          {...register('expenses.healthInsurance.payingParent')}
+                        />
+                        <label className="usa-radio__label" htmlFor="healthInsurance-shared">
+                          Split proportionally
+                        </label>
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Child Care Section */}
+          <div className="usa-card">
+            <div className="usa-card__body">
+              <div className="grid-row grid-gap">
+                <div className="tablet:grid-col-6">
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="expenses.childCare.totalCost">
                       Monthly Child Care Costs
                     </label>
-                    <div className="usa-hint margin-bottom-1">Work-related child care expenses</div>
+                    <div className="usa-hint margin-bottom-1">
+                      Total work-related child care expenses (to be shared between parents)
+                    </div>
                     <div className="usa-input-group">
                       <div className="usa-input-prefix" aria-hidden="true">
                         <span className="usa-input-prefix__text">$</span>
                       </div>
                       <input
                         className="usa-input"
-                        id="expenses.childCare"
+                        id="expenses.childCare.totalCost"
                         type="number"
                         min="0"
                         step="0.01"
                         placeholder="0.00"
-                        {...register('expenses.childCare', {
+                        {...register('expenses.childCare.totalCost', {
                           min: { value: 0, message: 'Amount cannot be negative' },
                           valueAsNumber: true,
                         })}
                       />
                     </div>
+                  </div>
+                </div>
+
+                <div className="tablet:grid-col-6">
+                  <div className="usa-form-group">
+                    <fieldset className="usa-fieldset">
+                      <legend className="usa-legend">Who pays for child care?</legend>
+                      <div className="usa-radio">
+                        <input
+                          className="usa-radio__input"
+                          id="childCare-parentA"
+                          type="radio"
+                          value="A"
+                          {...register('expenses.childCare.payingParent')}
+                        />
+                        <label className="usa-radio__label" htmlFor="childCare-parentA">
+                          Parent A pays
+                        </label>
+                      </div>
+                      <div className="usa-radio">
+                        <input
+                          className="usa-radio__input"
+                          id="childCare-parentB"
+                          type="radio"
+                          value="B"
+                          {...register('expenses.childCare.payingParent')}
+                        />
+                        <label className="usa-radio__label" htmlFor="childCare-parentB">
+                          Parent B pays
+                        </label>
+                      </div>
+                      <div className="usa-radio">
+                        <input
+                          className="usa-radio__input"
+                          id="childCare-shared"
+                          type="radio"
+                          value="shared"
+                          defaultChecked
+                          {...register('expenses.childCare.payingParent')}
+                        />
+                        <label className="usa-radio__label" htmlFor="childCare-shared">
+                          Split proportionally
+                        </label>
+                      </div>
+                    </fieldset>
                   </div>
                 </div>
               </div>
