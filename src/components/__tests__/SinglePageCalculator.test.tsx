@@ -30,13 +30,20 @@ jest.mock('../../utils/calculations', () => ({
   formatPercentage: jest.fn((value) => `${(value * 100).toFixed(1)}%`),
   getOvernightsFromSchedule: jest.fn((schedule, custom) => {
     switch (schedule) {
-      case 'no-visitation': return 0;
-      case 'minimal': return 52;
-      case 'standard': return 80;
-      case 'extended': return 110;
-      case 'shared': return 146;
-      case 'custom': return custom || 0;
-      default: return 0;
+      case 'no-visitation':
+        return 0;
+      case 'minimal':
+        return 52;
+      case 'standard':
+        return 80;
+      case 'extended':
+        return 110;
+      case 'shared':
+        return 146;
+      case 'custom':
+        return custom || 0;
+      default:
+        return 0;
     }
   }),
 }));
@@ -108,11 +115,13 @@ describe('SinglePageCalculator', () => {
 
     // The form should not submit without a custodial parent selected
     // We can't easily test the alert in this environment, so we just verify onComplete is not called
-    await waitFor(() => {
-      expect(mockOnComplete).not.toHaveBeenCalled();
-    }, { timeout: 100 }); // Short timeout since we expect it to fail quickly
+    await waitFor(
+      () => {
+        expect(mockOnComplete).not.toHaveBeenCalled();
+      },
+      { timeout: 100 }
+    ); // Short timeout since we expect it to fail quickly
   });
-
 
   it('renders expense inputs', () => {
     render(<SinglePageCalculator onComplete={mockOnComplete} />);

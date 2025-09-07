@@ -60,7 +60,7 @@ export const Deviations: React.FC = () => {
           <div className="usa-hint">
             Court-approved deviations from presumptive amount (enter as percentage)
           </div>
-          <div className="usa-input-prefix">
+          <div className="usa-input-group">
             <input
               className={`usa-input ${errors.deviations?.otherAdjustment ? 'usa-input--error' : ''}`}
               id="deviations.otherAdjustment"
@@ -73,7 +73,9 @@ export const Deviations: React.FC = () => {
                 valueAsNumber: true,
               })}
             />
-            <span className="usa-input-prefix__text">%</span>
+            <div className="usa-input-suffix" aria-hidden="true">
+              <span className="usa-input-suffix__text">%</span>
+            </div>
           </div>
           {errors.deviations?.otherAdjustment && (
             <span className="usa-error-message" role="alert">

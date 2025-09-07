@@ -17,8 +17,10 @@ export const ExpensesInput: React.FC = () => {
           <div className="usa-hint">
             Cost of health insurance covering the children (child portion only)
           </div>
-          <div className="usa-input-prefix">
-            <span className="usa-input-prefix__text">$</span>
+          <div className="usa-input-group">
+            <div className="usa-input-prefix" aria-hidden="true">
+              <span className="usa-input-prefix__text">$</span>
+            </div>
             <input
               className="usa-input"
               id="expenses.healthInsurance"
@@ -41,8 +43,10 @@ export const ExpensesInput: React.FC = () => {
           <div className="usa-hint">
             Work-related child care expenses (daycare, after-school care, etc.)
           </div>
-          <div className="usa-input-prefix">
-            <span className="usa-input-prefix__text">$</span>
+          <div className="usa-input-group">
+            <div className="usa-input-prefix" aria-hidden="true">
+              <span className="usa-input-prefix__text">$</span>
+            </div>
             <input
               className="usa-input"
               id="expenses.childCare"

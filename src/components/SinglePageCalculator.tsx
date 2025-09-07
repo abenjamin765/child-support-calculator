@@ -608,8 +608,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                     <div className="usa-hint margin-bottom-1">
                       Cost of health insurance covering the children
                     </div>
-                    <div className="usa-input-prefix">
-                      <span className="usa-input-prefix__text">$</span>
+                    <div className="usa-input-group">
+                      <div className="usa-input-prefix" aria-hidden="true">
+                        <span className="usa-input-prefix__text">$</span>
+                      </div>
                       <input
                         className="usa-input"
                         id="expenses.healthInsurance"
@@ -632,8 +634,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                       Monthly Child Care Costs
                     </label>
                     <div className="usa-hint margin-bottom-1">Work-related child care expenses</div>
-                    <div className="usa-input-prefix">
-                      <span className="usa-input-prefix__text">$</span>
+                    <div className="usa-input-group">
+                      <div className="usa-input-prefix" aria-hidden="true">
+                        <span className="usa-input-prefix__text">$</span>
+                      </div>
                       <input
                         className="usa-input"
                         id="expenses.childCare"
@@ -666,7 +670,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                 <div className="usa-hint margin-bottom-1">
                   Court-approved deviations from presumptive amount
                 </div>
-                <div className="usa-input-prefix">
+                <div className="usa-input-group">
                   <input
                     className={`usa-input ${errors.deviations?.otherAdjustment ? 'usa-input--error' : ''}`}
                     id="deviations.otherAdjustment"
@@ -679,7 +683,9 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                       valueAsNumber: true,
                     })}
                   />
-                  <span className="usa-input-prefix__text">%</span>
+                  <div className="usa-input-suffix" aria-hidden="true">
+                    <span className="usa-input-suffix__text">%</span>
+                  </div>
                 </div>
                 {errors.deviations?.otherAdjustment && (
                   <span className="usa-error-message" role="alert">
