@@ -17,11 +17,13 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
   const methods = useForm<WizardFormData>({
     defaultValues: {
       parentA: {
+        name: '',
         grossMonthly: 0,
         selfEmploymentTax: 0,
         preexistingSupport: 0,
       },
       parentB: {
+        name: '',
         grossMonthly: 0,
         selfEmploymentTax: 0,
         preexistingSupport: 0,
@@ -111,7 +113,9 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
           highIncome: incomeStatus.highIncome,
           parentingTime: data.parentingTime.annualOvernights,
           otherDeviations: data.deviations.otherAdjustment,
-        }
+        },
+        data.parentA.name || undefined,
+        data.parentB.name || undefined
       );
       setCalculationResult(result);
       onComplete(result);
@@ -143,6 +147,19 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
               <div className="usa-card">
                 <div className="usa-card__body">
                   <h3 className="usa-card__heading">Parent A</h3>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentA.name">
+                      Name (Optional)
+                    </label>
+                    <input
+                      className="usa-input"
+                      id="parentA.name"
+                      type="text"
+                      placeholder="Enter parent name"
+                      {...register('parentA.name')}
+                    />
+                  </div>
 
                   <div className="usa-form-group">
                     <label className="usa-label" htmlFor="parentA.grossMonthly">
@@ -212,6 +229,19 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
               <div className="usa-card">
                 <div className="usa-card__body">
                   <h3 className="usa-card__heading">Parent B</h3>
+
+                  <div className="usa-form-group">
+                    <label className="usa-label" htmlFor="parentB.name">
+                      Name (Optional)
+                    </label>
+                    <input
+                      className="usa-input"
+                      id="parentB.name"
+                      type="text"
+                      placeholder="Enter parent name"
+                      {...register('parentB.name')}
+                    />
+                  </div>
 
                   <div className="usa-form-group">
                     <label className="usa-label" htmlFor="parentB.grossMonthly">

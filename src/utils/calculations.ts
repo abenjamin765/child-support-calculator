@@ -20,6 +20,8 @@ export interface DeviationOptions {
 }
 
 export interface CalculationResult {
+  parentAName?: string;
+  parentBName?: string;
   grossIncomeA: number;
   grossIncomeB: number;
   adjustedIncomeA: number;
@@ -163,7 +165,9 @@ export const calculateChildSupport = (
   deductionsB: Deductions,
   numChildren: number,
   expenses: Expenses,
-  deviations: DeviationOptions
+  deviations: DeviationOptions,
+  parentAName?: string,
+  parentBName?: string
 ): CalculationResult => {
   // Step 1: Adjust incomes
   const adjustedIncomeA = adjustIncome(incomeA, deductionsA);
@@ -217,6 +221,8 @@ export const calculateChildSupport = (
   }
 
   return {
+    parentAName,
+    parentBName,
     grossIncomeA: incomeA,
     grossIncomeB: incomeB,
     adjustedIncomeA,

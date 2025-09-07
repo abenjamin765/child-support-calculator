@@ -5,6 +5,8 @@ import SinglePageCalculator from '../SinglePageCalculator';
 // Mock the calculation function
 jest.mock('../../utils/calculations', () => ({
   calculateChildSupport: jest.fn(() => ({
+    parentAName: 'John Doe',
+    parentBName: 'Jane Smith',
     grossIncomeA: 5000,
     grossIncomeB: 3000,
     adjustedIncomeA: 5000,
@@ -50,6 +52,7 @@ describe('SinglePageCalculator', () => {
 
     expect(screen.getByText('Parent A')).toBeInTheDocument();
     expect(screen.getByText('Parent B')).toBeInTheDocument();
+    expect(screen.getAllByLabelText(/Name \(Optional\)/)).toHaveLength(2);
     expect(screen.getAllByLabelText(/Gross Monthly Income/)).toHaveLength(2);
     expect(screen.getAllByLabelText(/Self-Employment Tax Deduction/)).toHaveLength(2);
     expect(screen.getAllByLabelText(/Preexisting Child Support/)).toHaveLength(2);

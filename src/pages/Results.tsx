@@ -9,6 +9,14 @@ interface ResultsProps {
 }
 
 export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
+  const getParentDisplayName = (parent: 'A' | 'B') => {
+    if (parent === 'A') {
+      return result.parentAName || 'Parent A';
+    } else {
+      return result.parentBName || 'Parent B';
+    }
+  };
+
   const getPayerInfo = () => {
     if (result.payer === 'None') {
       return {
@@ -18,14 +26,14 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
       };
     } else if (result.payer === 'A') {
       return {
-        text: 'Parent A pays Parent B',
-        description: 'Parent A has the higher support obligation',
+        text: `${getParentDisplayName('A')} pays ${getParentDisplayName('B')}`,
+        description: `${getParentDisplayName('A')} has the higher support obligation`,
         amount: formatCurrency(result.amount),
       };
     } else {
       return {
-        text: 'Parent B pays Parent A',
-        description: 'Parent B has the higher support obligation',
+        text: `${getParentDisplayName('B')} pays ${getParentDisplayName('A')}`,
+        description: `${getParentDisplayName('B')} has the higher support obligation`,
         amount: formatCurrency(result.amount),
       };
     }
@@ -88,13 +96,13 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
             </thead>
             <tbody>
               <tr>
-                <td>Parent A</td>
+                <td>{getParentDisplayName('A')}</td>
                 <td>{formatCurrency(result.grossIncomeA)}</td>
                 <td>{formatCurrency(result.adjustedIncomeA)}</td>
                 <td>{formatPercentage(result.proRataA)}</td>
               </tr>
               <tr>
-                <td>Parent B</td>
+                <td>{getParentDisplayName('B')}</td>
                 <td>{formatCurrency(result.grossIncomeB)}</td>
                 <td>{formatCurrency(result.adjustedIncomeB)}</td>
                 <td>{formatPercentage(result.proRataB)}</td>
@@ -118,11 +126,11 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
                 <td className="text-right">{formatCurrency(result.bcso)}</td>
               </tr>
               <tr>
-                <td>Parent A Basic Share</td>
+                <td>{getParentDisplayName('A')} Basic Share</td>
                 <td className="text-right">{formatCurrency(result.basicSupportA)}</td>
               </tr>
               <tr>
-                <td>Parent B Basic Share</td>
+                <td>{getParentDisplayName('B')} Basic Share</td>
                 <td className="text-right">{formatCurrency(result.basicSupportB)}</td>
               </tr>
             </tbody>
@@ -134,11 +142,11 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
           <table className="usa-table usa-table--borderless">
             <tbody>
               <tr>
-                <td>Parent A Expenses</td>
+                <td>{getParentDisplayName('A')} Expenses</td>
                 <td className="text-right">{formatCurrency(result.expensesA)}</td>
               </tr>
               <tr>
-                <td>Parent B Expenses</td>
+                <td>{getParentDisplayName('B')} Expenses</td>
                 <td className="text-right">{formatCurrency(result.expensesB)}</td>
               </tr>
               <tr className="text-bold">
@@ -154,11 +162,11 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
           <table className="usa-table usa-table--borderless">
             <tbody>
               <tr>
-                <td>Parent A Presumptive Support</td>
+                <td>{getParentDisplayName('A')} Presumptive Support</td>
                 <td className="text-right">{formatCurrency(result.presumptiveSupportA)}</td>
               </tr>
               <tr>
-                <td>Parent B Presumptive Support</td>
+                <td>{getParentDisplayName('B')} Presumptive Support</td>
                 <td className="text-right">{formatCurrency(result.presumptiveSupportB)}</td>
               </tr>
             </tbody>
@@ -170,11 +178,11 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
           <table className="usa-table usa-table--borderless">
             <tbody>
               <tr>
-                <td>Parent A Final Support</td>
+                <td>{getParentDisplayName('A')} Final Support</td>
                 <td className="text-right">{formatCurrency(result.finalSupportA)}</td>
               </tr>
               <tr>
-                <td>Parent B Final Support</td>
+                <td>{getParentDisplayName('B')} Final Support</td>
                 <td className="text-right">{formatCurrency(result.finalSupportB)}</td>
               </tr>
               <tr className="text-bold border-top-2px">

@@ -1,5 +1,6 @@
 // Form data types for the child support calculator wizard
 export interface ParentIncome {
+  name?: string;
   grossMonthly: number;
   selfEmploymentTax: number;
   preexistingSupport: number;
@@ -44,6 +45,8 @@ export interface WizardStep {
 
 // Calculation result types
 export interface CalculationBreakdown {
+  parentAName?: string;
+  parentBName?: string;
   grossIncomeA: number;
   grossIncomeB: number;
   adjustedIncomeA: number;
