@@ -46,6 +46,11 @@ jest.mock('../../utils/calculations', () => ({
         return 0;
     }
   }),
+  getCustodyAndVisitation: jest.fn(() => ({
+    custodialParent: 'A',
+    visitationSchedule: 'standard',
+    customOvernights: undefined,
+  })),
 }));
 
 describe('SinglePageCalculator', () => {
@@ -74,7 +79,7 @@ describe('SinglePageCalculator', () => {
     expect(screen.getAllByLabelText(/Gross Monthly Income/)).toHaveLength(2);
     expect(screen.getAllByLabelText(/Self-Employment Tax Deduction/)).toHaveLength(2);
     expect(screen.getAllByLabelText(/Preexisting Child Support/)).toHaveLength(2);
-    expect(screen.getAllByLabelText(/Custodial Parent/)).toHaveLength(2);
+    expect(screen.getAllByLabelText(/Custody & Visitation Arrangement/)).toHaveLength(2);
   });
 
   it('renders child information inputs', () => {
@@ -83,44 +88,44 @@ describe('SinglePageCalculator', () => {
     expect(screen.getByLabelText(/Number of Children/)).toBeInTheDocument();
   });
 
-  it('shows visitation schedule when custodial parent is selected', () => {
+  it('renders custody arrangement dropdowns', () => {
     render(<SinglePageCalculator onComplete={mockOnComplete} />);
 
-    // Select Parent A as custodial
-    const custodialRadios = screen.getAllByLabelText(/Custodial Parent/);
-    fireEvent.click(custodialRadios[0]); // Parent A custodial
+    // Check that both parents have custody arrangement dropdowns
+    const custodyDropdowns = screen.getAllByLabelText(/Custody & Visitation Arrangement/);
+    expect(custodyDropdowns).toHaveLength(2);
 
-    expect(screen.getByText('Visitation Schedule for Parent B')).toBeInTheDocument();
-    expect(screen.getByLabelText(/No Visitation \(0 overnights\)/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Minimal Visitation \(52 overnights\)/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Standard Visitation \(80 overnights\)/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Extended Visitation \(110 overnights\)/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Shared Custody \(146 overnights\)/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Custom Overnights/)).toBeInTheDocument();
+    // Check that the dropdowns contain the expected options
+    const parentADropdown = custodyDropdowns[0];
+    expect(parentADropdown).toHaveValue('custodial'); // Should default to custodial
+
+    const parentBDropdown = custodyDropdowns[1];
+    expect(parentBDropdown).toHaveValue('standard'); // Should default to standard visitation
+
+    // Check that all expected options are available
+    const options = screen.getAllByRole('option');
+    const optionTexts = options.map((option) => option.textContent);
+    expect(optionTexts).toContain('Custodial Parent (primary physical custody)');
+    expect(optionTexts).toContain('No Visitation (0 overnights)');
+    expect(optionTexts).toContain('Minimal Visitation (52 overnights)');
+    expect(optionTexts).toContain('Standard Visitation (80 overnights)');
+    expect(optionTexts).toContain('Extended Visitation (110 overnights)');
+    expect(optionTexts).toContain('Shared Custody (146 overnights)');
+    expect(optionTexts).toContain('Custom Overnights');
   });
 
-  it('validates that custodial parent is selected', async () => {
+  it('shows custom overnights input when custom is selected', () => {
     render(<SinglePageCalculator onComplete={mockOnComplete} />);
 
-    // Fill in required fields without selecting custodial parent
-    const grossIncomeInputs = screen.getAllByLabelText(/Gross Monthly Income/);
-    fireEvent.change(grossIncomeInputs[0], { target: { value: '5000' } });
-    fireEvent.change(grossIncomeInputs[1], { target: { value: '3000' } });
+    // Initially, custom overnights input should not be shown
+    expect(screen.queryByLabelText(/Custom Annual Overnight Visits/)).not.toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText(/Number of Children/), { target: { value: '2' } });
+    // Select custom for Parent A
+    const custodyDropdowns = screen.getAllByLabelText(/Custody & Visitation Arrangement/);
+    fireEvent.change(custodyDropdowns[0], { target: { value: 'custom' } });
 
-    // Submit form - this should trigger validation but not call onComplete
-    const submitButton = screen.getByText('Calculate Child Support');
-    fireEvent.click(submitButton);
-
-    // The form should not submit without a custodial parent selected
-    // We can't easily test the alert in this environment, so we just verify onComplete is not called
-    await waitFor(
-      () => {
-        expect(mockOnComplete).not.toHaveBeenCalled();
-      },
-      { timeout: 100 }
-    ); // Short timeout since we expect it to fail quickly
+    // Now custom overnights input should be shown for Parent A
+    expect(screen.getByLabelText(/Custom Annual Overnight Visits/)).toBeInTheDocument();
   });
 
   it('renders expense inputs', () => {
@@ -139,11 +144,7 @@ describe('SinglePageCalculator', () => {
   it('submits form and calls onComplete', async () => {
     render(<SinglePageCalculator onComplete={mockOnComplete} />);
 
-    // Select custodial parent
-    const custodialRadios = screen.getAllByLabelText(/Custodial Parent/);
-    fireEvent.click(custodialRadios[0]); // Parent A custodial
-
-    // Fill in required fields
+    // Fill in required fields (custody arrangements already have defaults)
     const grossIncomeInputs = screen.getAllByLabelText(/Gross Monthly Income/);
     fireEvent.change(grossIncomeInputs[0], { target: { value: '5000' } });
     fireEvent.change(grossIncomeInputs[1], { target: { value: '3000' } });
@@ -215,11 +216,7 @@ describe('SinglePageCalculator', () => {
     fireEvent.change(nameInputs[0], { target: { value: 'John Doe' } });
     fireEvent.change(nameInputs[1], { target: { value: 'Jane Smith' } });
 
-    // Select custodial parent
-    const custodialRadios = screen.getAllByLabelText(/Custodial Parent/);
-    fireEvent.click(custodialRadios[0]); // Parent A custodial
-
-    // Fill in required fields
+    // Fill in required fields (custody arrangements already have defaults)
     const grossIncomeInputs = screen.getAllByLabelText(/Gross Monthly Income/);
     fireEvent.change(grossIncomeInputs[0], { target: { value: '5000' } });
     fireEvent.change(grossIncomeInputs[1], { target: { value: '3000' } });

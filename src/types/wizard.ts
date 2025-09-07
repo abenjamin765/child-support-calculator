@@ -1,10 +1,20 @@
 // Form data types for the child support calculator wizard
+export type CustodyArrangement =
+  | 'custodial'
+  | 'no-visitation'
+  | 'minimal'
+  | 'standard'
+  | 'extended'
+  | 'shared'
+  | 'custom';
+
 export interface ParentIncome {
   name?: string;
   grossMonthly: number;
   selfEmploymentTax: number;
   preexistingSupport: number;
-  isCustodialParent?: boolean;
+  custodyArrangement: CustodyArrangement;
+  customOvernights?: number; // Only used when custodyArrangement is 'custom'
 }
 
 export interface ChildInfo {
@@ -16,18 +26,7 @@ export interface Expenses {
   childCare: number;
 }
 
-export type VisitationSchedule =
-  | 'no-visitation'
-  | 'minimal'
-  | 'standard'
-  | 'extended'
-  | 'shared'
-  | 'custom';
-
-export interface ParentingTime {
-  schedule: VisitationSchedule;
-  customOvernights?: number; // Only used when schedule is 'custom'
-}
+// ParentingTime interface removed - now handled through custody arrangements
 
 export interface Deviations {
   lowIncome: boolean;
@@ -40,7 +39,6 @@ export interface WizardFormData {
   parentB: ParentIncome;
   children: ChildInfo;
   expenses: Expenses;
-  parentingTime: ParentingTime;
   deviations: Deviations;
 }
 

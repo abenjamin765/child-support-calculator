@@ -21,14 +21,16 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
         grossMonthly: 0,
         selfEmploymentTax: 0,
         preexistingSupport: 0,
-        isCustodialParent: false,
+        custodyArrangement: 'custodial', // Parent A defaults to custodial
+        customOvernights: 0,
       },
       parentB: {
         name: '',
         grossMonthly: 0,
         selfEmploymentTax: 0,
         preexistingSupport: 0,
-        isCustodialParent: false,
+        custodyArrangement: 'standard', // Parent B defaults to standard visitation
+        customOvernights: 0,
       },
       children: {
         numberOfChildren: 1,
@@ -36,10 +38,6 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
       expenses: {
         healthInsurance: 0,
         childCare: 0,
-      },
-      parentingTime: {
-        schedule: 'no-visitation',
-        customOvernights: 0,
       },
       deviations: {
         lowIncome: false,
@@ -59,8 +57,6 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
   // Watch for income changes to update combined income
   const watchedParentAIncome = watch('parentA.grossMonthly');
   const watchedParentBIncome = watch('parentB.grossMonthly');
-  const watchedParentACustodial = watch('parentA.isCustodialParent');
-  const watchedParentBCustodial = watch('parentB.isCustodialParent');
 
   // Update combined income whenever incomes change
   React.useEffect(() => {
@@ -69,10 +65,6 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
     const combined = incomeA + incomeB;
     setCombinedIncome(combined);
   }, [watchedParentAIncome, watchedParentBIncome]);
-
-  // Determine which parent is custodial and non-custodial
-  const custodialParent = watchedParentACustodial ? 'A' : watchedParentBCustodial ? 'B' : null;
-  const nonCustodialParent = custodialParent === 'A' ? 'B' : custodialParent === 'B' ? 'A' : null;
 
   // Helper function to determine automatic deviations and income status
   const getIncomeStatus = (combinedIncome: number) => {
@@ -89,13 +81,6 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
   const onSubmit = async (data: WizardFormData) => {
     setIsCalculating(true);
     try {
-      // Validate that one parent is selected as custodial
-      if (!data.parentA.isCustodialParent && !data.parentB.isCustodialParent) {
-        alert('Please select which parent is the custodial parent (has primary physical custody).');
-        setIsCalculating(false);
-        return;
-      }
-
       // Calculate combined income
       const adjustedIncomeA =
         data.parentA.grossMonthly -
@@ -129,12 +114,14 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
         {
           lowIncome: incomeStatus.lowIncome,
           highIncome: incomeStatus.highIncome,
-          visitationSchedule: data.parentingTime.schedule,
-          customOvernights: data.parentingTime.customOvernights,
+          visitationSchedule: 'no-visitation', // Will be overridden by custody arrangements
+          customOvernights: 0, // Will be overridden by custody arrangements
           otherDeviations: data.deviations.otherAdjustment,
         },
-        data.parentingTime.schedule,
-        data.parentingTime.customOvernights,
+        data.parentA.custodyArrangement,
+        data.parentB.custodyArrangement,
+        data.parentA.customOvernights,
+        data.parentB.customOvernights,
         data.parentA.name || undefined,
         data.parentB.name || undefined
       );
@@ -244,29 +231,44 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                   </div>
 
                   <div className="usa-form-group">
-                    <fieldset className="usa-fieldset">
-                      <legend className="usa-legend">Custody Status</legend>
-                      <div className="usa-radio">
-                        <input
-                          className="usa-radio__input"
-                          id="parentA.custodial"
-                          type="radio"
-                          value="parentA"
-                          {...register('parentA.isCustodialParent', {
-                            onChange: (e) => {
-                              if (e.target.checked) {
-                                // Set the other parent to false when this one is selected
-                                methods.setValue('parentB.isCustodialParent', false);
-                              }
-                            },
-                          })}
-                        />
-                        <label className="usa-radio__label" htmlFor="parentA.custodial">
-                          Custodial Parent (has primary physical custody)
-                        </label>
-                      </div>
-                    </fieldset>
+                    <label className="usa-label" htmlFor="parentA.custodyArrangement">
+                      Custody & Visitation Arrangement
+                    </label>
+                    <select
+                      className="usa-select"
+                      id="parentA.custodyArrangement"
+                      {...register('parentA.custodyArrangement')}
+                    >
+                      <option value="custodial">Custodial Parent (primary physical custody)</option>
+                      <option value="no-visitation">No Visitation (0 overnights)</option>
+                      <option value="minimal">Minimal Visitation (52 overnights)</option>
+                      <option value="standard">Standard Visitation (80 overnights)</option>
+                      <option value="extended">Extended Visitation (110 overnights)</option>
+                      <option value="shared">Shared Custody (146 overnights)</option>
+                      <option value="custom">Custom Overnights</option>
+                    </select>
                   </div>
+
+                  {/* Custom overnights input for Parent A - only show when custom is selected */}
+                  {watch('parentA.custodyArrangement') === 'custom' && (
+                    <div className="usa-form-group margin-left-2">
+                      <label className="usa-label" htmlFor="parentA.customOvernights">
+                        Custom Annual Overnight Visits
+                      </label>
+                      <input
+                        className="usa-input"
+                        id="parentA.customOvernights"
+                        type="number"
+                        min="0"
+                        max="365"
+                        {...register('parentA.customOvernights', {
+                          min: { value: 0, message: 'Cannot be negative' },
+                          max: { value: 365, message: 'Cannot exceed 365 days' },
+                          valueAsNumber: true,
+                        })}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -351,29 +353,44 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                   </div>
 
                   <div className="usa-form-group">
-                    <fieldset className="usa-fieldset">
-                      <legend className="usa-legend">Custody Status</legend>
-                      <div className="usa-radio">
-                        <input
-                          className="usa-radio__input"
-                          id="parentB.custodial"
-                          type="radio"
-                          value="parentB"
-                          {...register('parentB.isCustodialParent', {
-                            onChange: (e) => {
-                              if (e.target.checked) {
-                                // Set the other parent to false when this one is selected
-                                methods.setValue('parentA.isCustodialParent', false);
-                              }
-                            },
-                          })}
-                        />
-                        <label className="usa-radio__label" htmlFor="parentB.custodial">
-                          Custodial Parent (has primary physical custody)
-                        </label>
-                      </div>
-                    </fieldset>
+                    <label className="usa-label" htmlFor="parentB.custodyArrangement">
+                      Custody & Visitation Arrangement
+                    </label>
+                    <select
+                      className="usa-select"
+                      id="parentB.custodyArrangement"
+                      {...register('parentB.custodyArrangement')}
+                    >
+                      <option value="custodial">Custodial Parent (primary physical custody)</option>
+                      <option value="no-visitation">No Visitation (0 overnights)</option>
+                      <option value="minimal">Minimal Visitation (52 overnights)</option>
+                      <option value="standard">Standard Visitation (80 overnights)</option>
+                      <option value="extended">Extended Visitation (110 overnights)</option>
+                      <option value="shared">Shared Custody (146 overnights)</option>
+                      <option value="custom">Custom Overnights</option>
+                    </select>
                   </div>
+
+                  {/* Custom overnights input for Parent B - only show when custom is selected */}
+                  {watch('parentB.custodyArrangement') === 'custom' && (
+                    <div className="usa-form-group margin-left-2">
+                      <label className="usa-label" htmlFor="parentB.customOvernights">
+                        Custom Annual Overnight Visits
+                      </label>
+                      <input
+                        className="usa-input"
+                        id="parentB.customOvernights"
+                        type="number"
+                        min="0"
+                        max="365"
+                        {...register('parentB.customOvernights', {
+                          min: { value: 0, message: 'Cannot be negative' },
+                          max: { value: 365, message: 'Cannot exceed 365 days' },
+                          valueAsNumber: true,
+                        })}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -424,140 +441,6 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
           </div>
         )}
 
-        {/* Visitation Schedule Section */}
-        {nonCustodialParent && (
-          <div className="margin-bottom-5">
-            <h2 className="margin-bottom-3">
-              Visitation Schedule for {nonCustodialParent === 'A' ? 'Parent A' : 'Parent B'}
-            </h2>
-            <div className="usa-card">
-              <div className="usa-card__body">
-                <fieldset className="usa-fieldset">
-                  <legend className="usa-legend">
-                    Annual Overnight Visits (Non-Custodial Parent)
-                  </legend>
-
-                  <div className="usa-radio">
-                    <input
-                      className="usa-radio__input"
-                      id="visitation.no-visitation"
-                      type="radio"
-                      value="no-visitation"
-                      {...register('parentingTime.schedule')}
-                    />
-                    <label className="usa-radio__label" htmlFor="visitation.no-visitation">
-                      <strong>No Visitation (0 overnights)</strong>
-                    </label>
-                    <div className="usa-radio__description">
-                      Noncustodial parent has no overnight visits.
-                    </div>
-                  </div>
-
-                  <div className="usa-radio">
-                    <input
-                      className="usa-radio__input"
-                      id="visitation.minimal"
-                      type="radio"
-                      value="minimal"
-                      {...register('parentingTime.schedule')}
-                    />
-                    <label className="usa-radio__label" htmlFor="visitation.minimal">
-                      <strong>Minimal Visitation (52 overnights)</strong>
-                    </label>
-                    <div className="usa-radio__description">
-                      Every other weekend (e.g., Friday–Sunday, ~2 days every 2 weeks).
-                    </div>
-                  </div>
-
-                  <div className="usa-radio">
-                    <input
-                      className="usa-radio__input"
-                      id="visitation.standard"
-                      type="radio"
-                      value="standard"
-                      {...register('parentingTime.schedule')}
-                    />
-                    <label className="usa-radio__label" htmlFor="visitation.standard">
-                      <strong>Standard Visitation (80 overnights)</strong>
-                    </label>
-                    <div className="usa-radio__description">
-                      Every other weekend plus 2 weeks in summer.
-                    </div>
-                  </div>
-
-                  <div className="usa-radio">
-                    <input
-                      className="usa-radio__input"
-                      id="visitation.extended"
-                      type="radio"
-                      value="extended"
-                      {...register('parentingTime.schedule')}
-                    />
-                    <label className="usa-radio__label" htmlFor="visitation.extended">
-                      <strong>Extended Visitation (110 overnights)</strong>
-                    </label>
-                    <div className="usa-radio__description">
-                      Every other weekend, one weekday per week, plus 4 weeks in summer.
-                    </div>
-                  </div>
-
-                  <div className="usa-radio">
-                    <input
-                      className="usa-radio__input"
-                      id="visitation.shared"
-                      type="radio"
-                      value="shared"
-                      {...register('parentingTime.schedule')}
-                    />
-                    <label className="usa-radio__label" htmlFor="visitation.shared">
-                      <strong>Shared Custody (146 overnights)</strong>
-                    </label>
-                    <div className="usa-radio__description">
-                      Near 50/50, e.g., alternating weeks or 2-2-3 schedule.
-                    </div>
-                  </div>
-
-                  <div className="usa-radio">
-                    <input
-                      className="usa-radio__input"
-                      id="visitation.custom"
-                      type="radio"
-                      value="custom"
-                      {...register('parentingTime.schedule')}
-                    />
-                    <label className="usa-radio__label" htmlFor="visitation.custom">
-                      <strong>Custom Overnights</strong>
-                    </label>
-                    <div className="usa-radio__description">
-                      Enter exact number of overnights per year (0–365).
-                    </div>
-                  </div>
-
-                  {/* Custom overnights input - only show when custom is selected */}
-                  {watch('parentingTime.schedule') === 'custom' && (
-                    <div className="usa-form-group margin-left-4">
-                      <label className="usa-label" htmlFor="parentingTime.customOvernights">
-                        Custom Annual Overnight Visits
-                      </label>
-                      <input
-                        className="usa-input"
-                        id="parentingTime.customOvernights"
-                        type="number"
-                        min="0"
-                        max="365"
-                        {...register('parentingTime.customOvernights', {
-                          min: { value: 0, message: 'Cannot be negative' },
-                          max: { value: 365, message: 'Cannot exceed 365 days' },
-                          valueAsNumber: true,
-                        })}
-                      />
-                    </div>
-                  )}
-                </fieldset>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Child Information Section */}
         <div className="margin-bottom-5">

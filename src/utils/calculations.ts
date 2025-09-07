@@ -20,6 +20,57 @@ export interface DeviationOptions {
   otherDeviations: number; // Percentage adjustment
 }
 
+// Helper function to determine custodial parent and visitation schedule from custody arrangements
+export const getCustodyAndVisitation = (
+  parentAArrangement: CustodyArrangement,
+  parentBArrangement: CustodyArrangement,
+  parentACustomOvernights?: number,
+  parentBCustomOvernights?: number
+): { custodialParent: 'A' | 'B', visitationSchedule: VisitationSchedule, customOvernights?: number } => {
+  // Determine which parent is custodial
+  const parentAIsCustodial = parentAArrangement === 'custodial';
+  const parentBIsCustodial = parentBArrangement === 'custodial';
+
+  // Convert CustodyArrangement to VisitationSchedule for non-custodial parent
+  const convertToVisitationSchedule = (arrangement: CustodyArrangement): VisitationSchedule => {
+    if (arrangement === 'custodial') return 'standard'; // fallback for custodial
+    return arrangement as VisitationSchedule;
+  };
+
+  // Helper to get custom overnights for a specific arrangement
+  const getCustomOvernights = (arrangement: CustodyArrangement, customValue?: number): number | undefined => {
+    return arrangement === 'custom' ? customValue : undefined;
+  };
+
+  if (parentAIsCustodial && parentBIsCustodial) {
+    // Both can't be custodial - default to Parent A
+    return {
+      custodialParent: 'A',
+      visitationSchedule: convertToVisitationSchedule(parentBArrangement),
+      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights)
+    };
+  } else if (parentAIsCustodial) {
+    return {
+      custodialParent: 'A',
+      visitationSchedule: convertToVisitationSchedule(parentBArrangement),
+      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights)
+    };
+  } else if (parentBIsCustodial) {
+    return {
+      custodialParent: 'B',
+      visitationSchedule: convertToVisitationSchedule(parentAArrangement),
+      customOvernights: getCustomOvernights(parentAArrangement, parentACustomOvernights)
+    };
+  } else {
+    // Neither is custodial - default to Parent A as custodial, Parent B with standard visitation
+    return {
+      custodialParent: 'A',
+      visitationSchedule: convertToVisitationSchedule(parentBArrangement),
+      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights)
+    };
+  }
+};
+
 export interface CalculationResult {
   parentAName?: string;
   parentBName?: string;
@@ -45,7 +96,10 @@ export interface CalculationResult {
 
 // Import BCSO table functions
 import { getBCSOAmount } from '../data/bcsoTable';
-import type { VisitationSchedule } from '../types/wizard';
+import type { CustodyArrangement } from '../types/wizard';
+
+// Define VisitationSchedule type locally
+export type VisitationSchedule = 'no-visitation' | 'minimal' | 'standard' | 'extended' | 'shared' | 'custom';
 
 /**
  * Adjust gross income by subtracting deductions
@@ -168,11 +222,21 @@ export const calculateChildSupport = (
   numChildren: number,
   expenses: Expenses,
   deviations: DeviationOptions,
-  visitationSchedule: VisitationSchedule,
-  customOvernights?: number,
+  parentAArrangement: CustodyArrangement,
+  parentBArrangement: CustodyArrangement,
+  parentACustomOvernights?: number,
+  parentBCustomOvernights?: number,
   parentAName?: string,
   parentBName?: string
 ): CalculationResult => {
+  // Step 0: Determine custody and visitation from arrangements
+  const { custodialParent, visitationSchedule, customOvernights } = getCustodyAndVisitation(
+    parentAArrangement,
+    parentBArrangement,
+    parentACustomOvernights,
+    parentBCustomOvernights
+  );
+
   // Step 1: Adjust incomes
   const adjustedIncomeA = adjustIncome(incomeA, deductionsA);
   const adjustedIncomeB = adjustIncome(incomeB, deductionsB);
@@ -200,8 +264,13 @@ export const calculateChildSupport = (
   const presumptiveSupportB = basicSupportB + expensesB;
 
   // Step 8: Apply deviations
-  const finalSupportA = applyDeviations(presumptiveSupportA, deviations, combinedIncome);
-  const finalSupportB = applyDeviations(presumptiveSupportB, deviations, combinedIncome);
+  const deviationsWithVisitation = {
+    ...deviations,
+    visitationSchedule,
+    customOvernights
+  };
+  const finalSupportA = applyDeviations(presumptiveSupportA, deviationsWithVisitation, combinedIncome);
+  const finalSupportB = applyDeviations(presumptiveSupportB, deviationsWithVisitation, combinedIncome);
 
   // Determine payer and amount
   // finalSupportA is what Parent A owes, finalSupportB is what Parent B owes

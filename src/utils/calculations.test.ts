@@ -196,7 +196,9 @@ describe('Child Support Calculations', () => {
         2, // 2 children
         defaultExpenses,
         defaultDeviations,
-        'no-visitation',
+        'custodial', // Parent A arrangement
+        'standard', // Parent B arrangement
+        undefined,
         undefined,
         undefined,
         undefined
@@ -218,7 +220,9 @@ describe('Child Support Calculations', () => {
         1,
         defaultExpenses,
         defaultDeviations,
-        'no-visitation',
+        'custodial', // Parent A arrangement
+        'standard', // Parent B arrangement
+        undefined,
         undefined,
         undefined,
         undefined
@@ -243,7 +247,9 @@ describe('Child Support Calculations', () => {
         2,
         expenses,
         defaultDeviations,
-        'no-visitation',
+        'custodial', // Parent A arrangement
+        'standard', // Parent B arrangement
+        undefined,
         undefined,
         undefined,
         undefined
@@ -262,7 +268,9 @@ describe('Child Support Calculations', () => {
         1,
         defaultExpenses,
         defaultDeviations,
-        'no-visitation',
+        'custodial', // Parent A arrangement
+        'standard', // Parent B arrangement
+        undefined,
         undefined,
         undefined,
         undefined
@@ -290,7 +298,9 @@ describe('Child Support Calculations', () => {
         2,
         defaultExpenses,
         highIncomeDeviations,
-        'no-visitation',
+        'custodial', // Parent A arrangement
+        'standard', // Parent B arrangement
+        undefined,
         undefined,
         undefined,
         undefined
@@ -311,7 +321,9 @@ describe('Child Support Calculations', () => {
         2,
         defaultExpenses,
         defaultDeviations,
-        'no-visitation',
+        'custodial', // Parent A arrangement
+        'standard', // Parent B arrangement
+        undefined,
         undefined,
         undefined,
         undefined
