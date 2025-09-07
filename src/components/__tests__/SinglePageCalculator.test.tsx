@@ -110,17 +110,17 @@ describe('SinglePageCalculator', () => {
     ).toHaveLength(2);
     expect(
       screen.getAllByRole('radio', {
-        name: 'Minimal Visitation Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.',
+        name: 'Minimal Parenting Time Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.',
       })
     ).toHaveLength(2);
     expect(
       screen.getAllByRole('radio', {
-        name: 'Standard Visitation Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.',
+        name: 'Standard Parenting Time Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.',
       })
     ).toHaveLength(2);
     expect(
       screen.getAllByRole('radio', {
-        name: 'Extended Visitation Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.',
+        name: 'Extended Parenting Time Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.',
       })
     ).toHaveLength(2);
     expect(

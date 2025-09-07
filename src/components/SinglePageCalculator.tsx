@@ -281,9 +281,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                               {...register('parentA.custodyArrangement')}
                             />
                             <label className="usa-radio__label" htmlFor="parentA.minimal">
-                              <strong>Minimal Visitation</strong>
+                              <strong>Minimal Parenting Time</strong>
                               <span className="usa-checkbox__label-description">
-                                Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
+                                Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52
+                                overnights per year.
                               </span>
                             </label>
                           </div>
@@ -299,9 +300,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                               {...register('parentA.custodyArrangement')}
                             />
                             <label className="usa-radio__label" htmlFor="parentA.standard">
-                              <strong>Standard Visitation</strong>
+                              <strong>Standard Parenting Time</strong>
                               <span className="usa-checkbox__label-description">
-                                Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
+                                Every other weekend + 2 weeks in summer + holidays = 80 overnights
+                                per year.
                               </span>
                             </label>
                           </div>
@@ -317,9 +319,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                               {...register('parentA.custodyArrangement')}
                             />
                             <label className="usa-radio__label" htmlFor="parentA.extended">
-                              <strong>Extended Visitation</strong>
+                              <strong>Extended Parenting Time</strong>
                               <span className="usa-checkbox__label-description">
-                                Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
+                                Every other weekend + one weekday per week + 4 weeks in summer = 110
+                                overnights per year.
                               </span>
                             </label>
                           </div>
@@ -337,7 +340,8 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             <label className="usa-radio__label" htmlFor="parentA.shared">
                               <strong>Shared Custody</strong>
                               <span className="usa-checkbox__label-description">
-                                Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
+                                Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146
+                                overnights per year.
                               </span>
                             </label>
                           </div>
@@ -518,9 +522,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                               {...register('parentB.custodyArrangement')}
                             />
                             <label className="usa-radio__label" htmlFor="parentB.minimal">
-                              <strong>Minimal Visitation</strong>
+                              <strong>Minimal Parenting Time</strong>
                               <span className="usa-checkbox__label-description">
-                                Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
+                                Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52
+                                overnights per year.
                               </span>
                             </label>
                           </div>
@@ -536,9 +541,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                               {...register('parentB.custodyArrangement')}
                             />
                             <label className="usa-radio__label" htmlFor="parentB.standard">
-                              <strong>Standard Visitation</strong>
+                              <strong>Standard Parenting Time</strong>
                               <span className="usa-checkbox__label-description">
-                                Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
+                                Every other weekend + 2 weeks in summer + holidays = 80 overnights
+                                per year.
                               </span>
                             </label>
                           </div>
@@ -554,9 +560,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                               {...register('parentB.custodyArrangement')}
                             />
                             <label className="usa-radio__label" htmlFor="parentB.extended">
-                              <strong>Extended Visitation</strong>
+                              <strong>Extended Parenting Time</strong>
                               <span className="usa-checkbox__label-description">
-                                Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
+                                Every other weekend + one weekday per week + 4 weeks in summer = 110
+                                overnights per year.
                               </span>
                             </label>
                           </div>
@@ -574,7 +581,8 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             <label className="usa-radio__label" htmlFor="parentB.shared">
                               <strong>Shared Custody</strong>
                               <span className="usa-checkbox__label-description">
-                                Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
+                                Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146
+                                overnights per year.
                               </span>
                             </label>
                           </div>
