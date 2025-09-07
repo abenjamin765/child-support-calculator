@@ -26,7 +26,11 @@ export const getCustodyAndVisitation = (
   parentBArrangement: CustodyArrangement,
   parentACustomOvernights?: number,
   parentBCustomOvernights?: number
-): { custodialParent: 'A' | 'B', visitationSchedule: VisitationSchedule, customOvernights?: number } => {
+): {
+  custodialParent: 'A' | 'B';
+  visitationSchedule: VisitationSchedule;
+  customOvernights?: number;
+} => {
   // Determine which parent is custodial
   const parentAIsCustodial = parentAArrangement === 'custodial';
   const parentBIsCustodial = parentBArrangement === 'custodial';
@@ -38,7 +42,10 @@ export const getCustodyAndVisitation = (
   };
 
   // Helper to get custom overnights for a specific arrangement
-  const getCustomOvernights = (arrangement: CustodyArrangement, customValue?: number): number | undefined => {
+  const getCustomOvernights = (
+    arrangement: CustodyArrangement,
+    customValue?: number
+  ): number | undefined => {
     return arrangement === 'custom' ? customValue : undefined;
   };
 
@@ -47,26 +54,26 @@ export const getCustodyAndVisitation = (
     return {
       custodialParent: 'A',
       visitationSchedule: convertToVisitationSchedule(parentBArrangement),
-      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights)
+      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights),
     };
   } else if (parentAIsCustodial) {
     return {
       custodialParent: 'A',
       visitationSchedule: convertToVisitationSchedule(parentBArrangement),
-      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights)
+      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights),
     };
   } else if (parentBIsCustodial) {
     return {
       custodialParent: 'B',
       visitationSchedule: convertToVisitationSchedule(parentAArrangement),
-      customOvernights: getCustomOvernights(parentAArrangement, parentACustomOvernights)
+      customOvernights: getCustomOvernights(parentAArrangement, parentACustomOvernights),
     };
   } else {
     // Neither is custodial - default to Parent A as custodial, Parent B with standard visitation
     return {
       custodialParent: 'A',
       visitationSchedule: convertToVisitationSchedule(parentBArrangement),
-      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights)
+      customOvernights: getCustomOvernights(parentBArrangement, parentBCustomOvernights),
     };
   }
 };
@@ -99,7 +106,13 @@ import { getBCSOAmount } from '../data/bcsoTable';
 import type { CustodyArrangement } from '../types/wizard';
 
 // Define VisitationSchedule type locally
-export type VisitationSchedule = 'no-visitation' | 'minimal' | 'standard' | 'extended' | 'shared' | 'custom';
+export type VisitationSchedule =
+  | 'no-visitation'
+  | 'minimal'
+  | 'standard'
+  | 'extended'
+  | 'shared'
+  | 'custom';
 
 /**
  * Adjust gross income by subtracting deductions
@@ -186,7 +199,10 @@ export const applyDeviations = (
   }
 
   // Parenting time deviation (discretionary until 2026, mandatory in 2026)
-  const overnights = getOvernightsFromSchedule(options.visitationSchedule, options.customOvernights);
+  const overnights = getOvernightsFromSchedule(
+    options.visitationSchedule,
+    options.customOvernights
+  );
   if (overnights > 0) {
     // Simplified: reduce by 2% per 30 days of parenting time over 73 days
     if (overnights > 73) {
@@ -267,10 +283,18 @@ export const calculateChildSupport = (
   const deviationsWithVisitation = {
     ...deviations,
     visitationSchedule,
-    customOvernights
+    customOvernights,
   };
-  const finalSupportA = applyDeviations(presumptiveSupportA, deviationsWithVisitation, combinedIncome);
-  const finalSupportB = applyDeviations(presumptiveSupportB, deviationsWithVisitation, combinedIncome);
+  const finalSupportA = applyDeviations(
+    presumptiveSupportA,
+    deviationsWithVisitation,
+    combinedIncome
+  );
+  const finalSupportB = applyDeviations(
+    presumptiveSupportB,
+    deviationsWithVisitation,
+    combinedIncome
+  );
 
   // Determine payer and amount
   // finalSupportA is what Parent A owes, finalSupportB is what Parent B owes

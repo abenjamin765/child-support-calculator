@@ -231,22 +231,136 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                   </div>
 
                   <div className="usa-form-group">
-                    <label className="usa-label" htmlFor="parentA.custodyArrangement">
-                      Custody & Visitation Arrangement
-                    </label>
-                    <select
-                      className="usa-select"
-                      id="parentA.custodyArrangement"
-                      {...register('parentA.custodyArrangement')}
-                    >
-                      <option value="custodial">Custodial Parent (primary physical custody)</option>
-                      <option value="no-visitation">No Visitation (0 overnights)</option>
-                      <option value="minimal">Minimal Visitation (52 overnights)</option>
-                      <option value="standard">Standard Visitation (80 overnights)</option>
-                      <option value="extended">Extended Visitation (110 overnights)</option>
-                      <option value="shared">Shared Custody (146 overnights)</option>
-                      <option value="custom">Custom Overnights</option>
-                    </select>
+                    <fieldset className="usa-fieldset">
+                      <legend className="usa-legend">Custody & Visitation Arrangement</legend>
+                      <div className="grid-row grid-gap">
+                        <div className="tablet:grid-col-12">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentA.custodial"
+                              type="radio"
+                              value="custodial"
+                              {...register('parentA.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentA.custodial">
+                              <strong>Custodial Parent</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Primary physical custody of the children. The other parent will have visitation rights.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentA.no-visitation"
+                              type="radio"
+                              value="no-visitation"
+                              {...register('parentA.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentA.no-visitation">
+                              <strong>No Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Noncustodial parent has no overnight visits with the children.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentA.minimal"
+                              type="radio"
+                              value="minimal"
+                              {...register('parentA.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentA.minimal">
+                              <strong>Minimal Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentA.standard"
+                              type="radio"
+                              value="standard"
+                              {...register('parentA.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentA.standard">
+                              <strong>Standard Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentA.extended"
+                              type="radio"
+                              value="extended"
+                              {...register('parentA.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentA.extended">
+                              <strong>Extended Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentA.shared"
+                              type="radio"
+                              value="shared"
+                              {...register('parentA.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentA.shared">
+                              <strong>Shared Custody</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentA.custom"
+                              type="radio"
+                              value="custom"
+                              {...register('parentA.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentA.custom">
+                              <strong>Custom Overnights</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Enter exact number of overnight visits per year (0–365 days).
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
                   </div>
 
                   {/* Custom overnights input for Parent A - only show when custom is selected */}
@@ -353,22 +467,136 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                   </div>
 
                   <div className="usa-form-group">
-                    <label className="usa-label" htmlFor="parentB.custodyArrangement">
-                      Custody & Visitation Arrangement
-                    </label>
-                    <select
-                      className="usa-select"
-                      id="parentB.custodyArrangement"
-                      {...register('parentB.custodyArrangement')}
-                    >
-                      <option value="custodial">Custodial Parent (primary physical custody)</option>
-                      <option value="no-visitation">No Visitation (0 overnights)</option>
-                      <option value="minimal">Minimal Visitation (52 overnights)</option>
-                      <option value="standard">Standard Visitation (80 overnights)</option>
-                      <option value="extended">Extended Visitation (110 overnights)</option>
-                      <option value="shared">Shared Custody (146 overnights)</option>
-                      <option value="custom">Custom Overnights</option>
-                    </select>
+                    <fieldset className="usa-fieldset">
+                      <legend className="usa-legend">Custody & Visitation Arrangement</legend>
+                      <div className="grid-row grid-gap">
+                        <div className="tablet:grid-col-12">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentB.custodial"
+                              type="radio"
+                              value="custodial"
+                              {...register('parentB.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentB.custodial">
+                              <strong>Custodial Parent</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Primary physical custody of the children. The other parent will have visitation rights.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentB.no-visitation"
+                              type="radio"
+                              value="no-visitation"
+                              {...register('parentB.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentB.no-visitation">
+                              <strong>No Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Noncustodial parent has no overnight visits with the children.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentB.minimal"
+                              type="radio"
+                              value="minimal"
+                              {...register('parentB.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentB.minimal">
+                              <strong>Minimal Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentB.standard"
+                              type="radio"
+                              value="standard"
+                              {...register('parentB.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentB.standard">
+                              <strong>Standard Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentB.extended"
+                              type="radio"
+                              value="extended"
+                              {...register('parentB.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentB.extended">
+                              <strong>Extended Visitation</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentB.shared"
+                              type="radio"
+                              value="shared"
+                              {...register('parentB.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentB.shared">
+                              <strong>Shared Custody</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tablet:grid-col-6">
+                          <div className="usa-radio">
+                            <input
+                              className="usa-radio__input"
+                              id="parentB.custom"
+                              type="radio"
+                              value="custom"
+                              {...register('parentB.custodyArrangement')}
+                            />
+                            <label className="usa-radio__label" htmlFor="parentB.custom">
+                              <strong>Custom Overnights</strong>
+                            </label>
+                            <div className="usa-radio__description">
+                              Enter exact number of overnight visits per year (0–365 days).
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
                   </div>
 
                   {/* Custom overnights input for Parent B - only show when custom is selected */}
@@ -440,7 +668,6 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
             </div>
           </div>
         )}
-
 
         {/* Child Information Section */}
         <div className="margin-bottom-5">

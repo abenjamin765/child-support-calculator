@@ -79,7 +79,7 @@ describe('SinglePageCalculator', () => {
     expect(screen.getAllByLabelText(/Gross Monthly Income/)).toHaveLength(2);
     expect(screen.getAllByLabelText(/Self-Employment Tax Deduction/)).toHaveLength(2);
     expect(screen.getAllByLabelText(/Preexisting Child Support/)).toHaveLength(2);
-    expect(screen.getAllByLabelText(/Custody & Visitation Arrangement/)).toHaveLength(2);
+    expect(screen.getAllByRole('group', { name: /Custody & Visitation Arrangement/ })).toHaveLength(2);
   });
 
   it('renders child information inputs', () => {
@@ -88,30 +88,27 @@ describe('SinglePageCalculator', () => {
     expect(screen.getByLabelText(/Number of Children/)).toBeInTheDocument();
   });
 
-  it('renders custody arrangement dropdowns', () => {
+  it('renders custody arrangement radio tiles', () => {
     render(<SinglePageCalculator onComplete={mockOnComplete} />);
 
-    // Check that both parents have custody arrangement dropdowns
-    const custodyDropdowns = screen.getAllByLabelText(/Custody & Visitation Arrangement/);
-    expect(custodyDropdowns).toHaveLength(2);
+    // Check that both parents have custody arrangement fieldsets
+    const fieldsets = screen.getAllByRole('group', { name: /Custody & Visitation Arrangement/ });
+    expect(fieldsets).toHaveLength(2);
 
-    // Check that the dropdowns contain the expected options
-    const parentADropdown = custodyDropdowns[0];
-    expect(parentADropdown).toHaveValue('custodial'); // Should default to custodial
+    // Check that all expected radio options are available (using getAllByRole to handle duplicates)
+    expect(screen.getAllByRole('radio', { name: 'Custodial Parent' })).toHaveLength(2);
+    expect(screen.getAllByRole('radio', { name: 'No Visitation' })).toHaveLength(2);
+    expect(screen.getAllByRole('radio', { name: 'Minimal Visitation' })).toHaveLength(2);
+    expect(screen.getAllByRole('radio', { name: 'Standard Visitation' })).toHaveLength(2);
+    expect(screen.getAllByRole('radio', { name: 'Extended Visitation' })).toHaveLength(2);
+    expect(screen.getAllByRole('radio', { name: 'Shared Custody' })).toHaveLength(2);
+    expect(screen.getAllByRole('radio', { name: 'Custom Overnights' })).toHaveLength(2);
 
-    const parentBDropdown = custodyDropdowns[1];
-    expect(parentBDropdown).toHaveValue('standard'); // Should default to standard visitation
-
-    // Check that all expected options are available
-    const options = screen.getAllByRole('option');
-    const optionTexts = options.map((option) => option.textContent);
-    expect(optionTexts).toContain('Custodial Parent (primary physical custody)');
-    expect(optionTexts).toContain('No Visitation (0 overnights)');
-    expect(optionTexts).toContain('Minimal Visitation (52 overnights)');
-    expect(optionTexts).toContain('Standard Visitation (80 overnights)');
-    expect(optionTexts).toContain('Extended Visitation (110 overnights)');
-    expect(optionTexts).toContain('Shared Custody (146 overnights)');
-    expect(optionTexts).toContain('Custom Overnights');
+    // Check that descriptions are present (using getAllByText for duplicates)
+    expect(screen.getAllByText('Primary physical custody of the children. The other parent will have visitation rights.')).toHaveLength(2);
+    expect(screen.getAllByText('Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.')).toHaveLength(2);
+    expect(screen.getAllByText('Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.')).toHaveLength(2);
+    expect(screen.getAllByText('Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.')).toHaveLength(2);
   });
 
   it('shows custom overnights input when custom is selected', () => {
@@ -120,9 +117,9 @@ describe('SinglePageCalculator', () => {
     // Initially, custom overnights input should not be shown
     expect(screen.queryByLabelText(/Custom Annual Overnight Visits/)).not.toBeInTheDocument();
 
-    // Select custom for Parent A
-    const custodyDropdowns = screen.getAllByLabelText(/Custody & Visitation Arrangement/);
-    fireEvent.change(custodyDropdowns[0], { target: { value: 'custom' } });
+    // Select custom for Parent A (target the first custom radio - Parent A)
+    const customRadios = screen.getAllByDisplayValue('custom'); // Gets both custom radio inputs
+    fireEvent.click(customRadios[0]); // Click the first one (Parent A)
 
     // Now custom overnights input should be shown for Parent A
     expect(screen.getByLabelText(/Custom Annual Overnight Visits/)).toBeInTheDocument();
