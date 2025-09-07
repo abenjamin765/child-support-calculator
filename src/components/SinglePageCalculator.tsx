@@ -237,7 +237,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                         <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentA.custodial"
                               type="radio"
                               value="custodial"
@@ -245,17 +245,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.custodial">
                               <strong>Custodial Parent</strong>
+                              <span className="usa-checkbox__label-description">
+                                Primary physical custody of the children. The other parent will have visitation rights.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Primary physical custody of the children. The other parent will have visitation rights.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentA.no-visitation"
                               type="radio"
                               value="no-visitation"
@@ -263,17 +263,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.no-visitation">
                               <strong>No Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Noncustodial parent has no overnight visits with the children.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Noncustodial parent has no overnight visits with the children.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentA.minimal"
                               type="radio"
                               value="minimal"
@@ -281,17 +281,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.minimal">
                               <strong>Minimal Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentA.standard"
                               type="radio"
                               value="standard"
@@ -299,17 +299,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.standard">
                               <strong>Standard Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentA.extended"
                               type="radio"
                               value="extended"
@@ -317,17 +317,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.extended">
                               <strong>Extended Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentA.shared"
                               type="radio"
                               value="shared"
@@ -335,17 +335,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.shared">
                               <strong>Shared Custody</strong>
+                              <span className="usa-checkbox__label-description">
+                                Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentA.custom"
                               type="radio"
                               value="custom"
@@ -353,10 +353,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentA.custom">
                               <strong>Custom Overnights</strong>
+                              <span className="usa-checkbox__label-description">
+                                Enter exact number of overnight visits per year (0–365 days).
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Enter exact number of overnight visits per year (0–365 days).
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -473,7 +473,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                         <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentB.custodial"
                               type="radio"
                               value="custodial"
@@ -481,17 +481,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.custodial">
                               <strong>Custodial Parent</strong>
+                              <span className="usa-checkbox__label-description">
+                                Primary physical custody of the children. The other parent will have visitation rights.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Primary physical custody of the children. The other parent will have visitation rights.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentB.no-visitation"
                               type="radio"
                               value="no-visitation"
@@ -499,17 +499,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.no-visitation">
                               <strong>No Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Noncustodial parent has no overnight visits with the children.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Noncustodial parent has no overnight visits with the children.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentB.minimal"
                               type="radio"
                               value="minimal"
@@ -517,17 +517,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.minimal">
                               <strong>Minimal Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentB.standard"
                               type="radio"
                               value="standard"
@@ -535,17 +535,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.standard">
                               <strong>Standard Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentB.extended"
                               type="radio"
                               value="extended"
@@ -553,17 +553,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.extended">
                               <strong>Extended Visitation</strong>
+                              <span className="usa-checkbox__label-description">
+                                Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentB.shared"
                               type="radio"
                               value="shared"
@@ -571,17 +571,17 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.shared">
                               <strong>Shared Custody</strong>
+                              <span className="usa-checkbox__label-description">
+                                Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.
-                            </div>
                           </div>
                         </div>
 
                         <div className="tablet:grid-col-6">
                           <div className="usa-radio">
                             <input
-                              className="usa-radio__input"
+                              className="usa-radio__input usa-radio__input--tile"
                               id="parentB.custom"
                               type="radio"
                               value="custom"
@@ -589,10 +589,10 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             />
                             <label className="usa-radio__label" htmlFor="parentB.custom">
                               <strong>Custom Overnights</strong>
+                              <span className="usa-checkbox__label-description">
+                                Enter exact number of overnight visits per year (0–365 days).
+                              </span>
                             </label>
-                            <div className="usa-radio__description">
-                              Enter exact number of overnight visits per year (0–365 days).
-                            </div>
                           </div>
                         </div>
                       </div>
