@@ -9,6 +9,10 @@ interface ResultsProps {
 }
 
 export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
+  console.log('Results component received result:', result);
+  console.log('Parent A name:', result.parentAName);
+  console.log('Parent B name:', result.parentBName);
+
   const getParentDisplayName = (parent: 'A' | 'B') => {
     if (parent === 'A') {
       return result.parentAName || 'Parent A';

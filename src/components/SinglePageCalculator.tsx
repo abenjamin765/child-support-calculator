@@ -117,6 +117,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
         data.parentA.name || undefined,
         data.parentB.name || undefined
       );
+
       setCalculationResult(result);
       onComplete(result);
     } catch (error) {

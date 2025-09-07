@@ -144,4 +144,30 @@ describe('SinglePageCalculator', () => {
     expect(screen.getByText('Very Low Income Notice:')).toBeInTheDocument();
     expect(screen.getByText(/below.*minimum threshold/)).toBeInTheDocument();
   });
+
+  it('passes both parent names to calculation function', async () => {
+    render(<SinglePageCalculator onComplete={mockOnComplete} />);
+
+    // Fill in parent names
+    const nameInputs = screen.getAllByLabelText(/Name \(Optional\)/);
+    fireEvent.change(nameInputs[0], { target: { value: 'John Doe' } });
+    fireEvent.change(nameInputs[1], { target: { value: 'Jane Smith' } });
+
+    // Fill in required fields
+    const grossIncomeInputs = screen.getAllByLabelText(/Gross Monthly Income/);
+    fireEvent.change(grossIncomeInputs[0], { target: { value: '5000' } });
+    fireEvent.change(grossIncomeInputs[1], { target: { value: '3000' } });
+
+    fireEvent.change(screen.getByLabelText(/Number of Children/), { target: { value: '2' } });
+
+    // Submit form
+    fireEvent.click(screen.getByText('Calculate Child Support'));
+
+    await waitFor(() => {
+      expect(mockOnComplete).toHaveBeenCalled();
+      const callArgs = mockOnComplete.mock.calls[0][0];
+      expect(callArgs.parentAName).toBe('John Doe');
+      expect(callArgs.parentBName).toBe('Jane Smith');
+    });
+  });
 });
