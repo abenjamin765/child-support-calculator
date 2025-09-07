@@ -12,6 +12,7 @@ interface SinglePageCalculatorProps {
 export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onComplete }) => {
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationResult, setCalculationResult] = useState<CalculationBreakdown | null>(null);
+  const [combinedIncome, setCombinedIncome] = useState<number>(0);
 
   const methods = useForm<WizardFormData>({
     defaultValues: {
@@ -43,11 +44,39 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
     },
   });
 
-  const { handleSubmit, register, formState: { errors } } = methods;
+  const { handleSubmit, register, formState: { errors }, watch } = methods;
+
+  // Watch for income changes to update combined income
+  const watchedParentAIncome = watch('parentA.grossMonthly');
+  const watchedParentBIncome = watch('parentB.grossMonthly');
+
+  // Update combined income whenever incomes change
+  React.useEffect(() => {
+    const incomeA = watchedParentAIncome || 0;
+    const incomeB = watchedParentBIncome || 0;
+    const combined = incomeA + incomeB;
+    setCombinedIncome(combined);
+  }, [watchedParentAIncome, watchedParentBIncome]);
+
+  // Helper function to determine automatic deviations
+  const getAutomaticDeviations = (combinedIncome: number) => {
+    return {
+      lowIncome: combinedIncome >= 1550 && combinedIncome <= 3950,
+      highIncome: combinedIncome > 40000,
+    };
+  };
 
   const onSubmit = async (data: WizardFormData) => {
     setIsCalculating(true);
     try {
+      // Calculate combined income
+      const adjustedIncomeA = data.parentA.grossMonthly - data.parentA.selfEmploymentTax - data.parentA.preexistingSupport;
+      const adjustedIncomeB = data.parentB.grossMonthly - data.parentB.selfEmploymentTax - data.parentB.preexistingSupport;
+      const combinedIncome = Math.max(0, adjustedIncomeA + adjustedIncomeB);
+
+      // Automatically determine deviations
+      const automaticDeviations = getAutomaticDeviations(combinedIncome);
+
       const result = calculateChildSupport(
         data.parentA.grossMonthly,
         data.parentB.grossMonthly,
@@ -65,8 +94,8 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
           childCare: data.expenses.childCare,
         },
         {
-          lowIncome: data.deviations.lowIncome,
-          highIncome: data.deviations.highIncome,
+          lowIncome: automaticDeviations.lowIncome,
+          highIncome: automaticDeviations.highIncome,
           parentingTime: data.parentingTime.annualOvernights,
           otherDeviations: data.deviations.otherAdjustment,
         }
@@ -236,6 +265,42 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
           </div>
         </div>
 
+        {/* Automatic Income-Based Adjustments Alert */}
+        {combinedIncome > 0 && (
+          <div className="margin-bottom-5">
+            <div className="usa-alert usa-alert--info usa-alert--slim">
+              <div className="usa-alert__body">
+                <h3 className="usa-alert__heading">
+                  <svg aria-hidden="true" className="usa-icon" focusable="false" role="img">
+                    <use xlinkHref="#info-circle" />
+                  </svg>
+                  Automatic Income-Based Adjustments
+                </h3>
+                <div className="usa-alert__text">
+                  <p className="margin-bottom-1">
+                    <strong>Combined Monthly Income:</strong> ${combinedIncome.toLocaleString()}
+                  </p>
+                  {getAutomaticDeviations(combinedIncome).lowIncome && (
+                    <p className="margin-bottom-1" style={{ color: '#2e8540' }}>
+                      <strong>Low-Income Adjustment Applied:</strong> Combined income ($1,550-$3,950) qualifies for automatic reduction under Georgia guidelines.
+                    </p>
+                  )}
+                  {getAutomaticDeviations(combinedIncome).highIncome && (
+                    <p className="margin-bottom-1" style={{ color: '#e49300' }}>
+                      <strong>High-Income Adjustment Applied:</strong> Combined income &gt;$40,000 qualifies for automatic adjustment under Georgia guidelines.
+                    </p>
+                  )}
+                  {!getAutomaticDeviations(combinedIncome).lowIncome && !getAutomaticDeviations(combinedIncome).highIncome && (
+                    <p className="margin-bottom-1">
+                      No automatic income-based adjustments apply to this income level.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Child Information Section */}
         <div className="margin-bottom-5">
           <h2 className="margin-bottom-3">Child Information</h2>
@@ -400,34 +465,6 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                 </div>
               </div>
 
-              <div className="margin-top-3">
-                <fieldset className="usa-fieldset">
-                  <legend className="usa-legend">Income-Based Deviations</legend>
-                  <div className="usa-checkbox">
-                    <input
-                      className="usa-checkbox__input"
-                      id="deviations.lowIncome"
-                      type="checkbox"
-                      {...register('deviations.lowIncome')}
-                    />
-                    <label className="usa-checkbox__label" htmlFor="deviations.lowIncome">
-                      Apply low-income adjustment ($1,550-$3,950/month combined income)
-                    </label>
-                  </div>
-
-                  <div className="usa-checkbox">
-                    <input
-                      className="usa-checkbox__input"
-                      id="deviations.highIncome"
-                      type="checkbox"
-                      {...register('deviations.highIncome')}
-                    />
-                    <label className="usa-checkbox__label" htmlFor="deviations.highIncome">
-                      Apply high-income adjustment (&gt;$40,000/month combined income)
-                    </label>
-                  </div>
-                </fieldset>
-              </div>
             </div>
           </div>
         </div>

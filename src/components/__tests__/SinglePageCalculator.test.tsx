@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SinglePageCalculator from '../SinglePageCalculator';
@@ -74,8 +73,6 @@ describe('SinglePageCalculator', () => {
 
     expect(screen.getByLabelText(/Annual Overnight Visits/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Other Adjustments/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Apply low-income adjustment/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Apply high-income adjustment/)).toBeInTheDocument();
   });
 
   it('submits form and calls onComplete', async () => {
@@ -101,5 +98,31 @@ describe('SinglePageCalculator', () => {
 
     expect(screen.getByText('Important Disclaimer')).toBeInTheDocument();
     expect(screen.getByText(/This tool provides estimates only/)).toBeInTheDocument();
+  });
+
+  it('shows automatic income-based adjustments alert', () => {
+    render(<SinglePageCalculator onComplete={mockOnComplete} />);
+
+    // Fill in incomes that qualify for low-income adjustment
+    const grossIncomeInputs = screen.getAllByLabelText(/Gross Monthly Income/);
+    fireEvent.change(grossIncomeInputs[0], { target: { value: '2000' } });
+    fireEvent.change(grossIncomeInputs[1], { target: { value: '1500' } });
+
+    expect(screen.getByText('Automatic Income-Based Adjustments')).toBeInTheDocument();
+    expect(screen.getByText('$3,500')).toBeInTheDocument(); // Combined income
+    expect(screen.getByText(/Low-Income Adjustment Applied/)).toBeInTheDocument();
+  });
+
+  it('shows no adjustments for middle income', () => {
+    render(<SinglePageCalculator onComplete={mockOnComplete} />);
+
+    // Fill in incomes that don't qualify for automatic adjustments
+    const grossIncomeInputs = screen.getAllByLabelText(/Gross Monthly Income/);
+    fireEvent.change(grossIncomeInputs[0], { target: { value: '3000' } });
+    fireEvent.change(grossIncomeInputs[1], { target: { value: '3000' } });
+
+    expect(screen.getByText('Automatic Income-Based Adjustments')).toBeInTheDocument();
+    expect(screen.getByText('$6,000')).toBeInTheDocument(); // Combined income
+    expect(screen.getByText('No automatic income-based adjustments apply to this income level.')).toBeInTheDocument();
   });
 });
