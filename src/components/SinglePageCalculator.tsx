@@ -246,13 +246,14 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             <label className="usa-radio__label" htmlFor="parentA.custodial">
                               <strong>Custodial Parent</strong>
                               <span className="usa-checkbox__label-description">
-                                Primary physical custody of the children. The other parent will have visitation rights.
+                                Primary physical custody of the children. The other parent will have
+                                visitation rights.
                               </span>
                             </label>
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -270,7 +271,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -288,7 +289,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -306,7 +307,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -324,7 +325,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -342,7 +343,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -482,13 +483,14 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                             <label className="usa-radio__label" htmlFor="parentB.custodial">
                               <strong>Custodial Parent</strong>
                               <span className="usa-checkbox__label-description">
-                                Primary physical custody of the children. The other parent will have visitation rights.
+                                Primary physical custody of the children. The other parent will have
+                                visitation rights.
                               </span>
                             </label>
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -506,7 +508,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -524,7 +526,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -542,7 +544,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -560,7 +562,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"
@@ -578,7 +580,7 @@ export const SinglePageCalculator: React.FC<SinglePageCalculatorProps> = ({ onCo
                           </div>
                         </div>
 
-                        <div className="tablet:grid-col-6">
+                        <div className="tablet:grid-col-12">
                           <div className="usa-radio">
                             <input
                               className="usa-radio__input usa-radio__input--tile"

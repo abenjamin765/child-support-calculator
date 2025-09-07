@@ -98,13 +98,41 @@ describe('SinglePageCalculator', () => {
     expect(fieldsets).toHaveLength(2);
 
     // Check that all expected radio options are available (using getAllByRole to handle duplicates)
-    expect(screen.getAllByRole('radio', { name: 'Custodial Parent Primary physical custody of the children. The other parent will have visitation rights.' })).toHaveLength(2);
-    expect(screen.getAllByRole('radio', { name: 'No Visitation Noncustodial parent has no overnight visits with the children.' })).toHaveLength(2);
-    expect(screen.getAllByRole('radio', { name: 'Minimal Visitation Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.' })).toHaveLength(2);
-    expect(screen.getAllByRole('radio', { name: 'Standard Visitation Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.' })).toHaveLength(2);
-    expect(screen.getAllByRole('radio', { name: 'Extended Visitation Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.' })).toHaveLength(2);
-    expect(screen.getAllByRole('radio', { name: 'Shared Custody Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.' })).toHaveLength(2);
-    expect(screen.getAllByRole('radio', { name: 'Custom Overnights Enter exact number of overnight visits per year (0–365 days).' })).toHaveLength(2);
+    expect(
+      screen.getAllByRole('radio', {
+        name: 'Custodial Parent Primary physical custody of the children. The other parent will have visitation rights.',
+      })
+    ).toHaveLength(2);
+    expect(
+      screen.getAllByRole('radio', {
+        name: 'No Visitation Noncustodial parent has no overnight visits with the children.',
+      })
+    ).toHaveLength(2);
+    expect(
+      screen.getAllByRole('radio', {
+        name: 'Minimal Visitation Every other weekend (Friday–Sunday, ~2 days every 2 weeks) = 52 overnights per year.',
+      })
+    ).toHaveLength(2);
+    expect(
+      screen.getAllByRole('radio', {
+        name: 'Standard Visitation Every other weekend + 2 weeks in summer + holidays = 80 overnights per year.',
+      })
+    ).toHaveLength(2);
+    expect(
+      screen.getAllByRole('radio', {
+        name: 'Extended Visitation Every other weekend + one weekday per week + 4 weeks in summer = 110 overnights per year.',
+      })
+    ).toHaveLength(2);
+    expect(
+      screen.getAllByRole('radio', {
+        name: 'Shared Custody Near 50/50 custody (alternating weeks or 2-2-3 schedule) = 146 overnights per year.',
+      })
+    ).toHaveLength(2);
+    expect(
+      screen.getAllByRole('radio', {
+        name: 'Custom Overnights Enter exact number of overnight visits per year (0–365 days).',
+      })
+    ).toHaveLength(2);
 
     // Check that descriptions are present (using getAllByText for duplicates)
     expect(
@@ -136,7 +164,9 @@ describe('SinglePageCalculator', () => {
     expect(screen.queryByLabelText(/Custom Annual Overnight Visits/)).not.toBeInTheDocument();
 
     // Select custom for Parent A (target the first custom radio - Parent A)
-    const customRadios = screen.getAllByRole('radio', { name: 'Custom Overnights Enter exact number of overnight visits per year (0–365 days).' });
+    const customRadios = screen.getAllByRole('radio', {
+      name: 'Custom Overnights Enter exact number of overnight visits per year (0–365 days).',
+    });
     fireEvent.click(customRadios[0]); // Click the first one (Parent A)
 
     // Now custom overnights input should be shown for Parent A
