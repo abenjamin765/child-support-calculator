@@ -15,7 +15,8 @@ export interface Expenses {
 export interface DeviationOptions {
   lowIncome: boolean;
   highIncome: boolean;
-  parentingTime: number; // Annual overnights
+  visitationSchedule: VisitationSchedule;
+  customOvernights?: number;
   otherDeviations: number; // Percentage adjustment
 }
 
@@ -44,6 +45,7 @@ export interface CalculationResult {
 
 // Import BCSO table functions
 import { getBCSOAmount } from '../data/bcsoTable';
+import type { VisitationSchedule } from '../types/wizard';
 
 /**
  * Adjust gross income by subtracting deductions
@@ -130,9 +132,9 @@ export const applyDeviations = (
   }
 
   // Parenting time deviation (discretionary until 2026, mandatory in 2026)
-  if (options.parentingTime > 0) {
+  const overnights = getOvernightsFromSchedule(options.visitationSchedule, options.customOvernights);
+  if (overnights > 0) {
     // Simplified: reduce by 2% per 30 days of parenting time over 73 days
-    const overnights = options.parentingTime;
     if (overnights > 73) {
       const reductionPercent = Math.min(0.5, ((overnights - 73) / 30) * 0.02); // Max 50% reduction
       adjustedAmount *= 1 - reductionPercent;
@@ -166,6 +168,8 @@ export const calculateChildSupport = (
   numChildren: number,
   expenses: Expenses,
   deviations: DeviationOptions,
+  visitationSchedule: VisitationSchedule,
+  customOvernights?: number,
   parentAName?: string,
   parentBName?: string
 ): CalculationResult => {
@@ -242,6 +246,34 @@ export const calculateChildSupport = (
     payer,
     amount,
   };
+};
+
+/**
+ * Convert visitation schedule to annual overnights
+ * @param schedule - The selected visitation schedule
+ * @param customOvernights - Custom overnights (only used for 'custom' schedule)
+ * @returns Number of annual overnights
+ */
+export const getOvernightsFromSchedule = (
+  schedule: VisitationSchedule,
+  customOvernights?: number
+): number => {
+  switch (schedule) {
+    case 'no-visitation':
+      return 0;
+    case 'minimal':
+      return 52; // Every other weekend (26 weekends × 2 nights)
+    case 'standard':
+      return 80; // Every other weekend (52) + 2 weeks summer (14) + holidays (14)
+    case 'extended':
+      return 110; // Every other weekend (52) + one weekday/week (26) + 4 weeks summer (28) + holidays (4)
+    case 'shared':
+      return 146; // Near 50/50 custody (40% of year, conservative estimate)
+    case 'custom':
+      return customOvernights ?? 0;
+    default:
+      return 0;
+  }
 };
 
 /**

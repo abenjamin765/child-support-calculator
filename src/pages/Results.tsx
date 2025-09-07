@@ -9,10 +9,6 @@ interface ResultsProps {
 }
 
 export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
-  console.log('Results component received result:', result);
-  console.log('Parent A name:', result.parentAName);
-  console.log('Parent B name:', result.parentBName);
-
   const getParentDisplayName = (parent: 'A' | 'B') => {
     if (parent === 'A') {
       return result.parentAName || 'Parent A';
@@ -155,7 +151,9 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
               </tr>
               <tr className="text-bold">
                 <td>Total Expenses</td>
-                <td className="text-right">{formatCurrency(result.expensesA + result.expensesB)}</td>
+                <td className="text-right">
+                  {formatCurrency(result.expensesA + result.expensesB)}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -200,18 +198,10 @@ export const Results: React.FC<ResultsProps> = ({ result, onRestart }) => {
 
       {/* Action Buttons */}
       <div className="usa-button-group margin-top-4">
-        <button
-          type="button"
-          className="usa-button usa-button--secondary"
-          onClick={onRestart}
-        >
+        <button type="button" className="usa-button usa-button--secondary" onClick={onRestart}>
           Start New Calculation
         </button>
-        <button
-          type="button"
-          className="usa-button"
-          onClick={() => window.print()}
-        >
+        <button type="button" className="usa-button" onClick={() => window.print()}>
           Print Results
         </button>
       </div>

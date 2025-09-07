@@ -113,7 +113,7 @@ describe('Child Support Calculations', () => {
       const options: DeviationOptions = {
         lowIncome: true,
         highIncome: false,
-        parentingTime: 0,
+        visitationSchedule: 'no-visitation',
         otherDeviations: 0,
       };
 
@@ -125,7 +125,7 @@ describe('Child Support Calculations', () => {
       const options: DeviationOptions = {
         lowIncome: false,
         highIncome: true,
-        parentingTime: 0,
+        visitationSchedule: 'no-visitation',
         otherDeviations: 0,
       };
 
@@ -137,7 +137,7 @@ describe('Child Support Calculations', () => {
       const options: DeviationOptions = {
         lowIncome: false,
         highIncome: false,
-        parentingTime: 100, // More than 73 days
+        visitationSchedule: 'extended', // 110 overnights (> 73 days)
         otherDeviations: 0,
       };
 
@@ -149,7 +149,7 @@ describe('Child Support Calculations', () => {
       const options: DeviationOptions = {
         lowIncome: false,
         highIncome: false,
-        parentingTime: 0,
+        visitationSchedule: 'no-visitation',
         otherDeviations: 10, // 10% increase
       };
 
@@ -161,7 +161,7 @@ describe('Child Support Calculations', () => {
       const options: DeviationOptions = {
         lowIncome: false,
         highIncome: false,
-        parentingTime: 0,
+        visitationSchedule: 'no-visitation',
         otherDeviations: 0,
       };
 
@@ -183,7 +183,7 @@ describe('Child Support Calculations', () => {
     const defaultDeviations: DeviationOptions = {
       lowIncome: false,
       highIncome: false,
-      parentingTime: 0,
+      visitationSchedule: 'no-visitation',
       otherDeviations: 0,
     };
 
@@ -195,7 +195,11 @@ describe('Child Support Calculations', () => {
         defaultDeductions,
         2, // 2 children
         defaultExpenses,
-        defaultDeviations
+        defaultDeviations,
+        'no-visitation',
+        undefined,
+        undefined,
+        undefined
       );
 
       expect(result.combinedIncome).toBe(5000);
@@ -213,7 +217,11 @@ describe('Child Support Calculations', () => {
         defaultDeductions,
         1,
         defaultExpenses,
-        defaultDeviations
+        defaultDeviations,
+        'no-visitation',
+        undefined,
+        undefined,
+        undefined
       );
 
       expect(result.proRataA).toBe(0.5);
@@ -234,7 +242,11 @@ describe('Child Support Calculations', () => {
         defaultDeductions,
         2,
         expenses,
-        defaultDeviations
+        defaultDeviations,
+        'no-visitation',
+        undefined,
+        undefined,
+        undefined
       );
 
       expect(result.expensesA).toBeCloseTo(333.33, 1); // 2/3 of total expenses based on income share (within $0.1 tolerance)
@@ -249,7 +261,11 @@ describe('Child Support Calculations', () => {
         defaultDeductions,
         1,
         defaultExpenses,
-        defaultDeviations
+        defaultDeviations,
+        'no-visitation',
+        undefined,
+        undefined,
+        undefined
       );
 
       expect(result.proRataA).toBe(0);
@@ -262,7 +278,7 @@ describe('Child Support Calculations', () => {
       const highIncomeDeviations: DeviationOptions = {
         lowIncome: false,
         highIncome: true,
-        parentingTime: 0,
+        visitationSchedule: 'no-visitation',
         otherDeviations: 0,
       };
 
@@ -273,7 +289,11 @@ describe('Child Support Calculations', () => {
         defaultDeductions,
         2,
         defaultExpenses,
-        highIncomeDeviations
+        highIncomeDeviations,
+        'no-visitation',
+        undefined,
+        undefined,
+        undefined
       );
 
       expect(result.combinedIncome).toBe(45000);
@@ -290,7 +310,11 @@ describe('Child Support Calculations', () => {
         defaultDeductions,
         2,
         defaultExpenses,
-        defaultDeviations
+        defaultDeviations,
+        'no-visitation',
+        undefined,
+        undefined,
+        undefined
       );
 
       expect(result.bcso).toBeGreaterThan(0);

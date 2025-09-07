@@ -4,6 +4,7 @@ export interface ParentIncome {
   grossMonthly: number;
   selfEmploymentTax: number;
   preexistingSupport: number;
+  isCustodialParent?: boolean;
 }
 
 export interface ChildInfo {
@@ -15,8 +16,17 @@ export interface Expenses {
   childCare: number;
 }
 
+export type VisitationSchedule =
+  | 'no-visitation'
+  | 'minimal'
+  | 'standard'
+  | 'extended'
+  | 'shared'
+  | 'custom';
+
 export interface ParentingTime {
-  annualOvernights: number;
+  schedule: VisitationSchedule;
+  customOvernights?: number; // Only used when schedule is 'custom'
 }
 
 export interface Deviations {
